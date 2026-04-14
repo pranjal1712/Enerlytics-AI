@@ -265,11 +265,13 @@ body {
 }
 
 .auth-sync-height {
-  min-height: 700px; /* Reduced from 860px for better laptop compatibility */
+  min-height: auto; /* Remove rigid height */
+  max-height: 90vh; /* Safety cap for all screens */
+  height: fit-content;
 }
 
 .auth-glow-header {
-  height: 130px; /* Reduced from 160px */
+  height: 8rem; /* Use rem for production consistency */
   position: relative;
   overflow: hidden;
   background: linear-gradient(to bottom, rgba(0, 200, 83, 0.3) 0%, transparent 100%);

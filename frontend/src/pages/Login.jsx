@@ -103,7 +103,7 @@ export default function Login({ setAuth, setHasDocs }) {
         <p className="text-gray-400 text-sm mt-1">Please enter your details to access dashboard</p>
       </div>
 
-      <div className="p-6 md:p-8">
+      <div className="p-8">
         {error && (
           <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl text-sm text-center">
             {error}
@@ -111,7 +111,7 @@ export default function Login({ setAuth, setHasDocs }) {
         )}
 
         {/* Social Logins */}
-        <div className="flex justify-center mb-4 md:mb-6">
+        <div className="flex justify-center mb-6">
           <button 
             onClick={loginWithGoogleManual}
             className="premium-social-btn hover:bg-white/5 transition-all w-full flex items-center justify-center gap-4 py-4 border-none cursor-pointer bg-transparent"
@@ -123,12 +123,12 @@ export default function Login({ setAuth, setHasDocs }) {
           </button>
         </div>
 
-        <div className="relative flex justify-center text-xs uppercase mb-4 md:mb-6">
+        <div className="relative flex justify-center text-xs uppercase mb-6">
           <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-white/5"></div></div>
           <span className="bg-[#0d0d0d] px-4 text-gray-400 font-bold z-10">Or</span>
         </div>
 
-        <form onSubmit={handleLogin} className="space-y-4 md:space-y-6">
+        <form onSubmit={handleLogin} className="space-y-6">
           <div>
             <label className="label-premium">E-mail Address <span className="text-energy">*</span></label>
             <input
