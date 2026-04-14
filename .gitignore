@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+env/
+.env
+
+# Sensitive Data
+.env.*
+!.env.example
+
+# Database & Temporary files
+*.db
+*.sqlite3
+backend/scratch/
+assets/screenshots/*.tmp
+
+# IDEs & System
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Docker
+.docker_data/

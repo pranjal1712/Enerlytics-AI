@@ -1,0 +1,93 @@
+/* 
+  Enerlytics AI - Dedicated Responsive Styling 
+  This file handles all authentication page layouts across different device sizes.
+*/
+
+/* --- Tablets & Small Laptops [1024px and below] --- */
+@media screen and (max-width: 1024px) {
+  .lottie-side {
+    width: 45% !important;
+  }
+  
+  .form-side {
+    width: 55% !important;
+  }
+
+  .left-site-name {
+    font-size: 4rem !important;
+  }
+}
+
+/* --- Mobile Devices (Large) [768px and below] --- */
+@media screen and (max-width: 768px) {
+  .auth-split-container {
+    flex-direction: column !important;
+    height: auto !important;
+    min-height: 100vh;
+    padding: 1.5rem;
+    overflow-y: auto !important;
+  }
+
+  /* Hide the heavy Lottie view on mobile to prioritize speed and form clarity */
+  .lottie-side {
+    display: none !important;
+  }
+
+  .form-side {
+    width: 100% !important;
+    padding: 0 !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
+
+  .auth-premium-card {
+    border-radius: 20px !important;
+    min-height: auto !important; /* Allow natural height on mobile */
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .auth-sync-height {
+    min-height: auto !important; /* Reset synchronized height for mobile lists */
+  }
+
+  .auth-glow-header {
+    height: 140px !important;
+  }
+
+  .auth-glow-header h1 {
+    font-size: 1.75rem !important;
+  }
+}
+
+/* --- Small Mobile (iPhone SE etc) [480px and below] --- */
+@media screen and (max-width: 480px) {
+  .p-12 {
+    padding: 1.5rem !important; /* Reduce internal form padding */
+  }
+
+  .auth-glow-header {
+    height: 120px !important;
+  }
+  
+  .auth-glow-header h1 {
+    font-size: 1.5rem !important;
+  }
+
+  .premium-input {
+    padding: 1rem 1.25rem !important;
+    font-size: 1rem !important;
+  }
+
+  .premium-btn-green {
+    padding: 1.15rem !important;
+    font-size: 1.1rem !important;
+  }
+  
+  .logo-brand-container {
+    width: 40px !important;
+    height: 40px !important;
+  }
+}

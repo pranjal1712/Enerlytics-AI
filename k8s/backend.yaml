@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: energy-rag
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+      - name: backend
+        image: <AWS_ACCOUNT_ID>.dkr.ecr.<REGION>.amazonaws.com/energy-rag-backend:latest
+        ports:
+        - containerPort: 8000
+        env:
+        - name: REDIS_URL
+          value: "redis://redis:6379"
+        - name: QDRANT_URL
+          value: "http://qdrant:6333"
+        envFrom:
+        - secretRef:
+            name: app-secrets
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  namespace: energy-rag
+spec:
+  selector:
+    app: backend
+  ports:
+  - protocol: TCP
+    port: 8000
+    targetPort: 8000
