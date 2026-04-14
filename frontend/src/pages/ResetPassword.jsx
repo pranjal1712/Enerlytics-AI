@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Lock, Loader2, CheckCircle2 } from 'lucide-react';
 import { useSearchParams, Link } from 'react-router-dom';
+import { getApiUrl } from '../api';
 
 const ResetPassword = () => {
   const [searchParams] = useSearchParams();
@@ -24,7 +25,7 @@ const ResetPassword = () => {
     setError('');
 
     try {
-      const response = await fetch('http://localhost:8000/auth/reset-password', {
+      const response = await fetch(getApiUrl('/auth/reset-password'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token, new_password: password }),
