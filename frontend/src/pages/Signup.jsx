@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useGoogleLogin } from '@react-oauth/google';
 import { User as UserIcon, Mail, Lock, Loader2 } from 'lucide-react';
 
 export default function Signup({ setAuth, setHasDocs }) {
@@ -76,12 +75,26 @@ export default function Signup({ setAuth, setHasDocs }) {
     }
   });
 
-  const signupWithGoogle = useGoogleLogin({
-    onSuccess: handleGoogleSuccess,
-    onError: () => setError('Google Authentication Failed'),
-    ux_mode: 'redirect',
-    redirect_uri: window.location.origin + '/signup',
+  // Handle Redirect Result on mount
+  useState(() => {
+    const params = new URLSearchParams(window.location.hash.replace('#', '?'));
+    const token = params.get('access_token');
+    if (token) {
+      handleGoogleSuccess({ access_token: token });
+      // Clean URL fragment
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
   });
+
+  const signupWithGoogleManual = () => {
+    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+    const redirectUri = window.location.origin + '/signup';
+    const scope = 'email profile openid';
+    const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=token&scope=${encodeURIComponent(scope)}`;
+    
+    // Manual Redirect to Google
+    window.location.href = googleAuthUrl;
+  };
 
   return (
     <div className="auth-premium-card auth-sync-height">
@@ -107,7 +120,7 @@ export default function Signup({ setAuth, setHasDocs }) {
         {/* Social Social */}
         <div className="flex justify-center mb-6 md:mb-10">
           <button 
-            onClick={() => signupWithGoogle()}
+            onClick={signupWithGoogleManual}
             className="premium-social-btn hover:bg-white/5 transition-all w-full flex items-center justify-center gap-4 py-4 border-none cursor-pointer bg-transparent"
           >
             <svg className="w-6 h-6" viewBox="0 0 24 24">

@@ -74,17 +74,20 @@ export default function Login({ setAuth, setHasDocs }) {
     const token = params.get('access_token');
     if (token) {
       handleGoogleSuccess({ access_token: token });
-      // Clean URL
+      // Clean URL fragment
       window.history.replaceState({}, document.title, window.location.pathname);
     }
   });
 
-  const loginWithGoogle = useGoogleLogin({
-    onSuccess: handleGoogleSuccess,
-    onError: () => setError('Google Authentication Failed'),
-    ux_mode: 'redirect',
-    redirect_uri: window.location.origin + '/login',
-  });
+  const loginWithGoogleManual = () => {
+    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+    const redirectUri = window.location.origin + '/login';
+    const scope = 'email profile openid';
+    const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=token&scope=${encodeURIComponent(scope)}`;
+    
+    // Manual Redirect to Google
+    window.location.href = googleAuthUrl;
+  };
 
   return (
     <div className="auth-premium-card auth-sync-height">
@@ -110,7 +113,7 @@ export default function Login({ setAuth, setHasDocs }) {
         {/* Social Logins */}
         <div className="flex justify-center mb-6 md:mb-10">
           <button 
-            onClick={() => loginWithGoogle()}
+            onClick={loginWithGoogleManual}
             className="premium-social-btn hover:bg-white/5 transition-all w-full flex items-center justify-center gap-4 py-4 border-none cursor-pointer bg-transparent"
           >
             <svg className="w-6 h-6" viewBox="0 0 24 24">
