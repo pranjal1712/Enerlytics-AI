@@ -103,7 +103,7 @@ export default function Login({ setAuth, setHasDocs }) {
         <p className="text-gray-400 text-sm mt-1">Please enter your details to access dashboard</p>
       </div>
 
-      <div className="p-6 md:p-10">
+      <div className="p-6 md:p-8">
         {error && (
           <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl text-sm text-center">
             {error}

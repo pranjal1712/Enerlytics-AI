@@ -136,12 +136,12 @@ body {
 
 .lottie-side {
   width: 100%;
-  max-width: 500px;
-  max-height: 400px; /* Prevent it from pushing text too far */
+  max-width: 440px; /* Reduced from 500px */
+  max-height: 320px; /* Reduced from 400px to shrink the bot */
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: -2rem; /* Pull text closer to animation */
+  margin-bottom: -1rem; /* More balanced spacing */
 }
 
 .form-side {
@@ -199,13 +199,13 @@ body {
     }
 
     .lottie-side {
-      max-width: 55%;
+      max-width: 45%; /* Reduced from 55% */
       padding-left: 5%;
     }
 
     .form-side {
-      width: 35%;
-      min-width: 480px;
+      width: 32%; /* Reduced from 35% */
+      min-width: 400px; /* Reduced from 480px for a sleeker look */
       padding-right: 5%;
     }
   }
