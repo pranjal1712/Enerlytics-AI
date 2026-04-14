@@ -74,7 +74,7 @@ async def signup(request: Request, response: Response, user: User):
     
     # Auto-login after signup
     token = create_access_token({"sub": user.email})
-    response.set_cookie(key="access_token", value=token, httponly=True, max_age=10*24*3600, samesite="lax", secure=True)
+    response.set_cookie(key="access_token", value=token, httponly=True, max_age=10*24*3600, samesite="none", secure=True)
     return {"message": "User created successfully", "access_token": token}
 
 @app.post("/auth/login")
@@ -88,12 +88,12 @@ async def login(request: Request, response: Response, user: User):
         raise HTTPException(status_code=401, detail="Invalid credentials")
     
     token = create_access_token({"sub": user.email})
-    response.set_cookie(key="access_token", value=token, httponly=True, max_age=10*24*3600, samesite="lax", secure=True)
+    response.set_cookie(key="access_token", value=token, httponly=True, max_age=10*24*3600, samesite="none", secure=True)
     return {"access_token": token}
 
 @app.post("/auth/logout")
 async def logout(response: Response):
-    response.delete_cookie(key="access_token", httponly=True, samesite="lax", secure=True)
+    response.delete_cookie(key="access_token", httponly=True, samesite="none", secure=True)
     return {"message": "Logged out successfully"}
 
 @app.post("/auth/google")
@@ -119,7 +119,7 @@ async def google_login(response: Response, data: dict):
         db_user = create_user(User(username=name, email=email, password=str(uuid.uuid4())))
     
     access_token = create_access_token({"sub": email})
-    response.set_cookie(key="access_token", value=access_token, httponly=True, max_age=10*24*3600, samesite="lax", secure=True)
+    response.set_cookie(key="access_token", value=access_token, httponly=True, max_age=10*24*3600, samesite="none", secure=True)
     return {"access_token": access_token}
 
 @app.post("/auth/forgot-password")
