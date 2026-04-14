@@ -222,13 +222,13 @@ body {
 
 .left-site-name {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: clamp(2.5rem, 8vw, 5.5rem); /* Robust Fluid Scaling */
-  font-weight: 800;
+  font-size: clamp(1.8rem, 4vw, 3.2rem); /* Even smaller fluid scaling */
+  font-weight: 700; /* Slightly lighter weight */
   color: white;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.02em;
   text-transform: uppercase;
-  margin-bottom: 0.15rem;
-  line-height: 0.95;
+  margin-bottom: 0.1rem;
+  line-height: 1;
 
   /* Pure White Shimmer Effect */
   background: linear-gradient(90deg, #fff 0%, rgba(255, 255, 255, 0.4) 25%, #fff 50%, rgba(255, 255, 255, 0.4) 75%, #fff 100%);
@@ -240,12 +240,12 @@ body {
 
 .left-slogan {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: clamp(1rem, 2vw, 1.4rem); /* Fluid Slogan */
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.5);
-  letter-spacing: 0.35em;
+  font-size: clamp(0.7rem, 1vw, 0.9rem); /* Even smaller slogan */
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.3); /* More transparent */
+  letter-spacing: 0.4em;
   text-transform: uppercase;
-  margin-left: 0.35em;
+  margin-left: 0.4em;
   white-space: nowrap;
 }
 
