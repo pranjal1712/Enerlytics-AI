@@ -67,8 +67,10 @@ function App() {
     );
   }
 
+  const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || "";
+
   return (
-    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+    <GoogleOAuthProvider clientId={googleClientId}>
       <Router>
         <Routes>
           {/* Main Layout Wrapper */}
@@ -98,7 +100,6 @@ function App() {
                   initialSessions={sessions} 
                   initialDocs={documents}
                   refreshWorkspace={refreshWorkspace}
-                  setAuth={setIsAuthenticated}
                 />
               ) : <Navigate to="/login" />
             } />

@@ -1,6 +1,11 @@
 # Build stage
-FROM node:18-alpine as build
+FROM node:20-slim AS build
 WORKDIR /app
+
+# Accept build arguments for Vite environment variables
+ARG VITE_GOOGLE_CLIENT_ID
+ENV VITE_GOOGLE_CLIENT_ID=$VITE_GOOGLE_CLIENT_ID
+
 COPY package*.json ./
 RUN npm install
 COPY . .
