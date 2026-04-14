@@ -137,9 +137,11 @@ body {
 .lottie-side {
   width: 100%;
   max-width: 500px;
+  max-height: 400px; /* Prevent it from pushing text too far */
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-bottom: -2rem; /* Pull text closer to animation */
 }
 
 .form-side {
@@ -220,12 +222,13 @@ body {
 
 .left-site-name {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 5.5rem;
+  font-size: clamp(2.5rem, 8vw, 5.5rem); /* Robust Fluid Scaling */
   font-weight: 800;
   color: white;
   letter-spacing: -0.04em;
   text-transform: uppercase;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.15rem;
+  line-height: 0.95;
 
   /* Pure White Shimmer Effect */
   background: linear-gradient(90deg, #fff 0%, rgba(255, 255, 255, 0.4) 25%, #fff 50%, rgba(255, 255, 255, 0.4) 75%, #fff 100%);
@@ -237,12 +240,13 @@ body {
 
 .left-slogan {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 1.6rem;
+  font-size: clamp(1rem, 2vw, 1.4rem); /* Fluid Slogan */
   font-weight: 500;
   color: rgba(255, 255, 255, 0.5);
   letter-spacing: 0.35em;
   text-transform: uppercase;
   margin-left: 0.35em;
+  white-space: nowrap;
 }
 
 .auth-premium-card {

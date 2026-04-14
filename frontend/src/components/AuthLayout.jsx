@@ -12,7 +12,7 @@ const AuthLayout = () => {
             loop
             autoplay
           />
-          <div className="left-branding">
+          <div className="left-branding w-full flex flex-col items-center">
             <h1 className="left-site-name">Enerlytics AI</h1>
             <p className="left-slogan">Think energy. Think Smart</p>
           </div>
