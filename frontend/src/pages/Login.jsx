@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useGoogleLogin } from '@react-oauth/google';
 import { Mail, Lock, Loader2 } from 'lucide-react';
+import { getApiUrl } from '../api';
 
 export default function Login({ setAuth, setHasDocs }) {
   const [email, setEmail] = useState('');
@@ -11,12 +12,12 @@ export default function Login({ setAuth, setHasDocs }) {
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
-    if (e) e.preventDefault();
-    setLoading(true);
-    setError('');
-    
     try {
-      const res = await fetch('/api/auth/login', {
+      if (e) e.preventDefault();
+      setLoading(true);
+      setError('');
+      
+      const res = await fetch(getApiUrl('/api/auth/login'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -24,7 +25,7 @@ export default function Login({ setAuth, setHasDocs }) {
       });
       if (res.ok) {
         // Fetch new status
-        const statusRes = await fetch('/api/user/status', { credentials: 'include' });
+        const statusRes = await fetch(getApiUrl('/api/user/status'), { credentials: 'include' });
         if (statusRes.ok) {
           const statusData = await statusRes.json();
           setAuth(true);
@@ -44,14 +45,14 @@ export default function Login({ setAuth, setHasDocs }) {
   const handleGoogleSuccess = async (tokenResponse) => {
     try {
       setLoading(true);
-      const res = await fetch('/api/auth/google', {
+      const res = await fetch(getApiUrl('/api/auth/google'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify({ access_token: tokenResponse.access_token })
       });
       if (res.ok) {
-        const statusRes = await fetch('/api/user/status', { credentials: 'include' });
+        const statusRes = await fetch(getApiUrl('/api/user/status'), { credentials: 'include' });
         if (statusRes.ok) {
           const statusData = await statusRes.json();
           setAuth(true);

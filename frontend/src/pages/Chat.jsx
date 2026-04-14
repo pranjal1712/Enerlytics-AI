@@ -5,7 +5,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import ProfileModal from '../components/ProfileModal';
 import NeuralBoot from '../components/NeuralBoot';
-import TypedMarkdown from '../components/TypedMarkdown';
+import TypedMarkdown from './components/TypedMarkdown';
+import { getApiUrl } from '../api';
 
 export default function Chat({ userProfile: propProfile, initialSessions, initialDocs, refreshWorkspace, setAuth }) {
   const [messages, setMessages] = useState([]);
@@ -86,7 +87,7 @@ export default function Chat({ userProfile: propProfile, initialSessions, initia
 
   const handleForceNewChat = async () => {
     try {
-      const res = await fetch('/api/chats/new', { 
+      const res = await fetch(getApiUrl('/api/chats/new'), { 
         method: 'POST', 
         credentials: 'include' 
       });
@@ -106,7 +107,7 @@ export default function Chat({ userProfile: propProfile, initialSessions, initia
   // Local state update functions for when children mutate data
   const fetchSessions = async () => {
     try {
-      const res = await fetch('/api/chats', { credentials: 'include' });
+      const res = await fetch(getApiUrl('/api/chats'), { credentials: 'include' });
       if (res.ok) {
         const data = await res.json();
         setSessions(data);
@@ -119,7 +120,7 @@ export default function Chat({ userProfile: propProfile, initialSessions, initia
   const fetchChatHistory = async (sid) => {
     setIsHistoryLoading(true);
     try {
-        const res = await fetch(`/api/chat/history?session_id=${sid}`, { credentials: 'include' });
+        const res = await fetch(getApiUrl(`/api/chat/history?session_id=${sid}`), { credentials: 'include' });
         if (res.ok) {
             const data = await res.json();
             const formatted = data.map(m => ({
@@ -138,7 +139,7 @@ export default function Chat({ userProfile: propProfile, initialSessions, initia
 
   const handleNewChat = async () => {
     try {
-      const res = await fetch('/api/chats/new', { 
+      const res = await fetch(getApiUrl('/api/chats/new'), { 
         method: 'POST', 
         credentials: 'include' 
       });
@@ -184,7 +185,7 @@ export default function Chat({ userProfile: propProfile, initialSessions, initia
 
   const handleDeleteSession = async (sid) => {
     try {
-      await fetch(`/api/chats/${sid}`, { 
+      await fetch(getApiUrl(`/api/chats/${sid}`), { 
         method: 'DELETE', 
         credentials: 'include' 
       });
@@ -210,7 +211,7 @@ export default function Chat({ userProfile: propProfile, initialSessions, initia
     let currentSession = activeSession;
     if (!currentSession) {
       try {
-        const res = await fetch('/api/chats/new', { 
+        const res = await fetch(getApiUrl('/api/chats/new'), { 
           method: 'POST', 
           credentials: 'include' 
         });
@@ -234,7 +235,7 @@ export default function Chat({ userProfile: propProfile, initialSessions, initia
     formData.append('file', file);
     
     try {
-      const res = await fetch('/api/upload', {
+      const res = await fetch(getApiUrl('/api/upload'), {
         method: 'POST',
         credentials: 'include',
         body: formData,
@@ -284,7 +285,7 @@ export default function Chat({ userProfile: propProfile, initialSessions, initia
     setInput('');
 
     try {
-      const res = await fetch('/api/chat', {
+      const res = await fetch(getApiUrl('/api/chat'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -376,7 +377,7 @@ export default function Chat({ userProfile: propProfile, initialSessions, initia
 
   const handleLogout = async () => {
     try {
-      await fetch('/api/auth/logout', { 
+      await fetch(getApiUrl('/api/auth/logout'), { 
         method: 'POST', 
         credentials: 'include' 
       });

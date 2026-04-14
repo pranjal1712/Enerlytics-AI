@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { User as UserIcon, Mail, Lock, Loader2 } from 'lucide-react';
+import { getApiUrl } from '../api';
 
 export default function Signup({ setAuth, setHasDocs }) {
   const [email, setEmail] = useState('');
@@ -11,12 +12,12 @@ export default function Signup({ setAuth, setHasDocs }) {
   const navigate = useNavigate();
 
   const handleSignup = async (e) => {
-    if (e) e.preventDefault();
-    setLoading(true);
-    setError('');
-
     try {
-      const res = await fetch('/api/auth/signup', {
+      if (e) e.preventDefault();
+      setLoading(true);
+      setError('');
+
+      const res = await fetch(getApiUrl('/api/auth/signup'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -40,14 +41,14 @@ export default function Signup({ setAuth, setHasDocs }) {
   const handleGoogleSuccess = async (tokenResponse) => {
     try {
       setLoading(true);
-      const res = await fetch('/api/auth/google', {
+      const res = await fetch(getApiUrl('/api/auth/google'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify({ access_token: tokenResponse.access_token })
       });
       if (res.ok) {
-        const statusRes = await fetch('/api/user/status', { credentials: 'include' });
+        const statusRes = await fetch(getApiUrl('/api/user/status'), { credentials: 'include' });
         if (statusRes.ok) {
           const statusData = await statusRes.json();
           if (setAuth) setAuth(true);

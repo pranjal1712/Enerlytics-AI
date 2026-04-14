@@ -12,6 +12,7 @@ import { Loader2 } from 'lucide-react';
 import RootLayout from './components/RootLayout';
 import AuthLayout from './components/AuthLayout';
 import SkeletonLoader from './components/SkeletonLoader';
+import { getApiUrl } from './api';
 
 // Generate a stable unique key once per full page load to force fresh resets on refresh
 const INITIAL_LOAD_ID = Math.random().toString(36).substring(7);
@@ -27,7 +28,7 @@ function App() {
   const fetchWorkspaceData = async (isRefresh = false) => {
     try {
       if (!isRefresh) setLoading(true);
-      const res = await fetch('/api/workspace/init', { credentials: 'include' });
+      const res = await fetch(getApiUrl('/api/workspace/init'), { credentials: 'include' });
       if (res.ok) {
         const data = await res.json();
         setIsAuthenticated(data.status.authenticated);
