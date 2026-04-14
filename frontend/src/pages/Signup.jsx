@@ -40,6 +40,7 @@ export default function Signup({ setAuth, setHasDocs }) {
 
   const handleGoogleSuccess = async (tokenResponse) => {
     try {
+      setLoading(true);
       const res = await fetch('/api/auth/google', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -59,12 +60,27 @@ export default function Signup({ setAuth, setHasDocs }) {
       }
     } catch (err) {
       setError('Google authentication failed');
+    } finally {
+      setLoading(false);
     }
   };
+
+  // Handle Redirect Result on mount
+  useState(() => {
+    const params = new URLSearchParams(window.location.hash.replace('#', '?'));
+    const token = params.get('access_token');
+    if (token) {
+      handleGoogleSuccess({ access_token: token });
+      // Clean URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  });
 
   const signupWithGoogle = useGoogleLogin({
     onSuccess: handleGoogleSuccess,
     onError: () => setError('Google Authentication Failed'),
+    ux_mode: 'redirect',
+    redirect_uri: window.location.origin + '/signup',
   });
 
   return (
