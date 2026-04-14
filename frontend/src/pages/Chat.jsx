@@ -5,7 +5,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import ProfileModal from '../components/ProfileModal';
 import NeuralBoot from '../components/NeuralBoot';
-import TypedMarkdown from './components/TypedMarkdown';
+import TypedMarkdown from '../components/TypedMarkdown';
 import { getApiUrl } from '../api';
 
 export default function Chat({ userProfile: propProfile, initialSessions, initialDocs, refreshWorkspace, setAuth }) {
