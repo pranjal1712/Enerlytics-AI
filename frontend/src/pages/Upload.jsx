@@ -86,11 +86,11 @@ export default function Upload({ setHasDocs, refreshWorkspace }) {
 
   return (
     <div className="upload-page-wrapper">
-      <div className="absolute top-8 left-8 flex items-center gap-3">
-        <div className="logo-brand-container" style={{ width: '40px', height: '40px', padding: '4px' }}>
+      <div className="absolute top-6 left-8 flex items-center gap-3">
+        <div className="logo-brand-container" style={{ width: '36px', height: '36px', padding: '3px' }}>
           <img src="/logo.png" alt="Logo" className="logo-brand-img" />
         </div>
-        <span className="text-2xl font-bold text-white tracking-widest">ENERLYTICS <span className="text-energy">AI</span></span>
+        <span className="text-xl font-bold text-white tracking-widest opacity-80">ENERLYTICS <span className="text-energy">AI</span></span>
       </div>
 
       <div className="upload-content-container">
