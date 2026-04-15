@@ -23,10 +23,11 @@ import os
 app = FastAPI(title="EnergyMind RAG API")
 
 # Setup CORS - Use specific origin for cookies
-allowed_origins = os.getenv(
+raw_origins = os.getenv(
     "ALLOWED_ORIGINS", 
     "http://localhost:3000,http://127.0.0.1:3000,http://localhost:5173,http://127.0.0.1:5173"
-).split(",")
+)
+allowed_origins = [o.strip() for o in raw_origins.split(",") if o.strip()]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
