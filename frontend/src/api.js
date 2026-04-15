@@ -1,5 +1,5 @@
 // Centralized API configuration for production and development
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
 
 export const getApiUrl = (path) => {
   // Normalize path and strip legacy '/api' prefix if present

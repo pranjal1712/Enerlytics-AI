@@ -38,8 +38,8 @@ const ForgotPassword = () => {
   return (
     <div className="auth-premium-card">
       {/* Glowing Header */}
-      <div className="auth-glow-header pt-6">
-        <div className="flex items-center gap-3 mb-8">
+      <div className="auth-glow-header pt-12">
+        <div className="flex items-center gap-3 mb-6">
           <div className="logo-brand-container">
             <img src="/logo.png" alt="Logo" className="logo-brand-img" />
           </div>

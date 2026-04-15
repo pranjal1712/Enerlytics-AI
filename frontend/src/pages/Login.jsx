@@ -11,6 +11,11 @@ export default function Login({ setAuth, setHasDocs }) {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
+  const loginWithGoogle = useGoogleLogin({
+    onSuccess: (tokenResponse) => handleGoogleSuccess(tokenResponse),
+    onError: () => setError('Google Login Failed'),
+  });
+
   const handleLogin = async (e) => {
     try {
       if (e) e.preventDefault();
@@ -69,38 +74,19 @@ export default function Login({ setAuth, setHasDocs }) {
     }
   };
 
-  // Handle Redirect Result on mount
-  useState(() => {
-    const params = new URLSearchParams(window.location.hash.replace('#', '?'));
-    const token = params.get('access_token');
-    if (token) {
-      handleGoogleSuccess({ access_token: token });
-      // Clean URL fragment
-      window.history.replaceState({}, document.title, window.location.pathname);
-    }
-  });
 
-  const loginWithGoogleManual = () => {
-    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-    const redirectUri = window.location.origin + '/login';
-    const scope = 'email profile openid';
-    const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=token&scope=${encodeURIComponent(scope)}`;
-    
-    // Manual Redirect to Google
-    window.location.href = googleAuthUrl;
-  };
 
   return (
     <div className="auth-premium-card auth-sync-height">
       {/* Glowing Header */}
-      <div className="auth-glow-header pt-6">
-        <div className="flex items-center gap-3 mb-8">
+      <div className="auth-glow-header pt-12">
+        <div className="flex items-center gap-3 mb-6">
           <div className="logo-brand-container">
             <img src="/logo.png" alt="Logo" className="logo-brand-img" />
           </div>
           <span className="text-2xl font-bold tracking-tight text-white">Enerlytics AI</span>
         </div>
-        <h1 className="text-3xl font-bold text-white tracking-wide">Welcome Back</h1>
+        <h1 className="text-2xl font-bold text-white tracking-wide">Welcome Back</h1>
         <p className="text-gray-400 text-sm mt-1">Please enter your details to access dashboard</p>
       </div>
 
@@ -114,7 +100,7 @@ export default function Login({ setAuth, setHasDocs }) {
         {/* Social Logins */}
         <div className="flex justify-center mb-6">
           <button 
-            onClick={loginWithGoogleManual}
+            onClick={() => loginWithGoogle()}
             className="premium-social-btn hover:bg-white/5 transition-all w-full flex items-center justify-center gap-4 py-4 border-none cursor-pointer bg-transparent"
           >
             <svg className="w-6 h-6" viewBox="0 0 24 24">
@@ -129,7 +115,7 @@ export default function Login({ setAuth, setHasDocs }) {
           <span className="bg-[#0d0d0d] px-4 text-gray-400 font-bold z-10">Or</span>
         </div>
 
-        <form onSubmit={handleLogin} className="space-y-6">
+        <form onSubmit={handleLogin} className="space-y-5">
           <div>
             <label className="label-premium">E-mail Address <span className="text-energy">*</span></label>
             <input

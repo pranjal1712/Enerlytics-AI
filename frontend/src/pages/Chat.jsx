@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Send, LogOut, FileText, File, ArrowRight, Plus, Upload as UploadIcon, Loader2, Menu, MoreVertical } from 'lucide-react';
+import { Send, LogOut, FileText, File, ArrowRight, Plus, Upload as UploadIcon, Loader2, Menu, MoreVertical, Settings } from 'lucide-react';
 
 import { useNavigate, useLocation } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
@@ -13,12 +13,12 @@ export default function Chat({ userProfile: propProfile, initialSessions, initia
   const [input, setInput] = useState('');
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
-  const [uploadingType, setUploadingType] = useState(null); 
+  const [uploadingType, setUploadingType] = useState(null);
   const [uploadError, setUploadError] = useState(null);
   const [hasDocuments, setHasDocuments] = useState(initialDocs?.length > 0);
   const [isDragging, setIsDragging] = useState(false);
   const [isHistoryLoading, setIsHistoryLoading] = useState(false);
-  
+
   // SESSION & PROFILE STATE
   const [sessions, setSessions] = useState(initialSessions || []);
   const [documents, setDocuments] = useState(initialDocs || []);
@@ -27,7 +27,7 @@ export default function Chat({ userProfile: propProfile, initialSessions, initia
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isBooting, setIsBooting] = useState(true);
   const [isDataLoaded, setIsDataLoaded] = useState(!!propProfile);
-  
+
   const [isTraceOpen, setIsTraceOpen] = useState(false);
   const [traceSources, setTraceSources] = useState([]);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
@@ -61,7 +61,7 @@ export default function Chat({ userProfile: propProfile, initialSessions, initia
       didInit.current = true;
 
       // 1. FORCE RESET IMMEDIATELY
-      localStorage.removeItem('activeSessionId'); 
+      localStorage.removeItem('activeSessionId');
       setActiveSession(null);
       setMessages([]);
       setIsBooting(true);
@@ -87,9 +87,9 @@ export default function Chat({ userProfile: propProfile, initialSessions, initia
 
   const handleForceNewChat = async () => {
     try {
-      const res = await fetch(getApiUrl('/api/chats/new'), { 
-        method: 'POST', 
-        credentials: 'include' 
+      const res = await fetch(getApiUrl('/api/chats/new'), {
+        method: 'POST',
+        credentials: 'include'
       });
       if (res.ok) {
         const data = await res.json();
@@ -120,28 +120,28 @@ export default function Chat({ userProfile: propProfile, initialSessions, initia
   const fetchChatHistory = async (sid) => {
     setIsHistoryLoading(true);
     try {
-        const res = await fetch(getApiUrl(`/api/chat/history?session_id=${sid}`), { credentials: 'include' });
-        if (res.ok) {
-            const data = await res.json();
-            const formatted = data.map(m => ({
-                role: m.role,
-                content: m.content
-            }));
-            setMessages(formatted);
-            if (formatted.length > 0) setHasDocuments(true);
-        }
+      const res = await fetch(getApiUrl(`/api/chat/history?session_id=${sid}`), { credentials: 'include' });
+      if (res.ok) {
+        const data = await res.json();
+        const formatted = data.map(m => ({
+          role: m.role,
+          content: m.content
+        }));
+        setMessages(formatted);
+        if (formatted.length > 0) setHasDocuments(true);
+      }
     } catch (err) {
-        console.error("History fetch failed:", err);
+      console.error("History fetch failed:", err);
     } finally {
-        setIsHistoryLoading(false);
+      setIsHistoryLoading(false);
     }
   };
 
   const handleNewChat = async () => {
     try {
-      const res = await fetch(getApiUrl('/api/chats/new'), { 
-        method: 'POST', 
-        credentials: 'include' 
+      const res = await fetch(getApiUrl('/api/chats/new'), {
+        method: 'POST',
+        credentials: 'include'
       });
       if (res.ok) {
         const data = await res.json();
@@ -179,20 +179,20 @@ export default function Chat({ userProfile: propProfile, initialSessions, initia
     e.preventDefault();
     setIsDragging(false);
     if (e.dataTransfer.files.length > 0) {
-        navigate('/upload'); // Future: pass files to upload
+      navigate('/upload'); // Future: pass files to upload
     }
   };
 
   const handleDeleteSession = async (sid) => {
     try {
-      await fetch(getApiUrl(`/api/chats/${sid}`), { 
-        method: 'DELETE', 
-        credentials: 'include' 
+      await fetch(getApiUrl(`/api/chats/${sid}`), {
+        method: 'DELETE',
+        credentials: 'include'
       });
       // Optimistic Update: Filter BOTH sessions and documents
       setSessions(sessions.filter(s => s.id !== sid));
       setDocuments(documents.filter(d => d.linked_session_id !== sid));
-      
+
       if (activeSession?.id === sid) {
         setActiveSession(null);
         setMessages([]);
@@ -211,9 +211,9 @@ export default function Chat({ userProfile: propProfile, initialSessions, initia
     let currentSession = activeSession;
     if (!currentSession) {
       try {
-        const res = await fetch(getApiUrl('/api/chats/new'), { 
-          method: 'POST', 
-          credentials: 'include' 
+        const res = await fetch(getApiUrl('/api/chats/new'), {
+          method: 'POST',
+          credentials: 'include'
         });
         if (res.ok) {
           currentSession = await res.json();
@@ -233,7 +233,7 @@ export default function Chat({ userProfile: propProfile, initialSessions, initia
 
     const formData = new FormData();
     formData.append('file', file);
-    
+
     try {
       const res = await fetch(getApiUrl('/api/upload'), {
         method: 'POST',
@@ -242,8 +242,8 @@ export default function Chat({ userProfile: propProfile, initialSessions, initia
       });
 
       if (res.ok) {
-        const duration = 2500; 
-        const interval = 30; 
+        const duration = 2500;
+        const interval = 30;
         const step = 100 / (duration / interval);
 
         const timer = setInterval(() => {
@@ -279,31 +279,49 @@ export default function Chat({ userProfile: propProfile, initialSessions, initia
 
   const handleSend = async () => {
     if (!input.trim()) return;
-    
-    const userMsg = { role: 'user', content: input };
+
+    const queryForTitle = input;
+    const userMsg = { role: 'user', content: queryForTitle };
     setMessages(prev => [...prev, userMsg]);
     setInput('');
+
+    // Auto-rename session on first message to reflect the user's question
+    if (messages.length === 0 && activeSession?.title === "New Analysis") {
+      const newTitle = queryForTitle.length > 50 ? queryForTitle.substring(0, 47) + "..." : queryForTitle;
+      fetch(getApiUrl(`/api/chats/${activeSession.id}/title`), {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ title: newTitle })
+      }).then(res => {
+        if (res.ok) {
+          const updated = { ...activeSession, title: newTitle };
+          setActiveSession(updated);
+          setSessions(prev => prev.map(s => s.id === activeSession.id ? updated : s));
+        }
+      }).catch(err => console.error("Rename failed:", err));
+    }
 
     try {
       const res = await fetch(getApiUrl('/api/chat'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           query: input,
-          session_id: activeSession?.id 
+          session_id: activeSession?.id
         })
       });
 
       if (!res.ok) {
-        if(res.status === 429) {
+        if (res.status === 429) {
           setMessages(prev => [...prev, { role: 'ai', content: 'Rate limit exceeded. Please try again later.' }]);
         }
         return;
       }
 
       const contentType = res.headers.get('content-type');
-      
+
       if (contentType && contentType.includes('application/json')) {
         const data = await res.json();
         setMessages(prev => [...prev, { role: 'ai', content: data.response, isNew: true, isStreaming: false }]);
@@ -320,36 +338,36 @@ export default function Chat({ userProfile: propProfile, initialSessions, initia
         done = readerDone;
         if (value) {
           const chunkText = decoder.decode(value, { stream: true });
-          
+
           // Analytical Trace Parsing: Check for [METADATA] prefix
           if (chunkText.includes('[METADATA]:')) {
             try {
-                const parts = chunkText.split('\n\n');
-                const metaPart = parts.find(p => p.startsWith('[METADATA]:'));
-                
-                if (metaPart) {
-                    const metaString = metaPart.replace('[METADATA]: ', '');
-                    const metadata = JSON.parse(metaString);
-                    
-                    setMessages(prev => {
-                        const next = [...prev];
-                        next[next.length - 1].sources = metadata.chunks;
-                        return next;
-                    });
-                    
-                    // If there's content after the metadata line in the same chunk
-                    const bodyText = parts.filter(p => !p.startsWith('[METADATA]:')).join('\n\n');
-                    if (bodyText) {
-                        setMessages(prev => {
-                            const next = [...prev];
-                            next[next.length - 1].content += bodyText;
-                            return next;
-                        });
-                    }
-                    continue;
+              const parts = chunkText.split('\n\n');
+              const metaPart = parts.find(p => p.startsWith('[METADATA]:'));
+
+              if (metaPart) {
+                const metaString = metaPart.replace('[METADATA]: ', '');
+                const metadata = JSON.parse(metaString);
+
+                setMessages(prev => {
+                  const next = [...prev];
+                  next[next.length - 1].sources = metadata.chunks;
+                  return next;
+                });
+
+                // If there's content after the metadata line in the same chunk
+                const bodyText = parts.filter(p => !p.startsWith('[METADATA]:')).join('\n\n');
+                if (bodyText) {
+                  setMessages(prev => {
+                    const next = [...prev];
+                    next[next.length - 1].content += bodyText;
+                    return next;
+                  });
                 }
+                continue;
+              }
             } catch (e) {
-                console.error("Metadata parse error", e);
+              console.error("Metadata parse error", e);
             }
           }
 
@@ -361,7 +379,7 @@ export default function Chat({ userProfile: propProfile, initialSessions, initia
           });
         }
       }
-      
+
       // Generation finished
       setMessages(prev => {
         const newMessages = [...prev];
@@ -377,9 +395,9 @@ export default function Chat({ userProfile: propProfile, initialSessions, initia
 
   const handleLogout = async () => {
     try {
-      await fetch(getApiUrl('/api/auth/logout'), { 
-        method: 'POST', 
-        credentials: 'include' 
+      await fetch(getApiUrl('/api/auth/logout'), {
+        method: 'POST',
+        credentials: 'include'
       });
       if (setAuth) setAuth(false);
       navigate('/login');
@@ -392,32 +410,32 @@ export default function Chat({ userProfile: propProfile, initialSessions, initia
   useEffect(() => {
     const lastMsg = messages[messages.length - 1];
     if (lastMsg?.role === 'user' || (lastMsg?.role === 'ai' && !lastMsg?.isStreaming)) {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages]);
 
   if (isBooting) {
-    return <NeuralBoot onComplete={() => {}} />;
+    return <NeuralBoot onComplete={() => { }} />;
   }
 
   return (
-    <div 
-        className="dashboard-layout"
-        onDragOver={onDragOver}
-        onDragLeave={onDragLeave}
-        onDrop={onDrop}
+    <div
+      className="dashboard-layout"
+      onDragOver={onDragOver}
+      onDragLeave={onDragLeave}
+      onDrop={onDrop}
     >
       {isDragging && (
         <div className="drag-overlay">
-            <div className="drag-message-glow">
-                <UploadIcon size={80} className="drag-icon-pulse" />
-                <h2>Drop Energy Technical Assets</h2>
-                <p>Release to initiate Neural Analysis Pipeline</p>
-            </div>
+          <div className="drag-message-glow">
+            <UploadIcon size={80} className="drag-icon-pulse" />
+            <h2>Drop Energy Technical Assets</h2>
+            <p>Release to initiate Neural Analysis Pipeline</p>
+          </div>
         </div>
       )}
 
-      <Sidebar 
+      <Sidebar
         sessions={sessions}
         activeSession={activeSession}
         initialDocs={documents}
@@ -443,12 +461,12 @@ export default function Chat({ userProfile: propProfile, initialSessions, initia
             <Menu size={20} className="text-energy" />
             <span>Enerlytics <span className="text-energy">AI</span></span>
           </button>
-          
+
           <div className="mobile-menu-container">
             <button className="mobile-menu-btn" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
               <MoreVertical size={20} />
             </button>
-            
+
             {isMobileMenuOpen && (
               <>
                 <div className="mobile-menu-overlay" onClick={() => setIsMobileMenuOpen(false)} />
@@ -457,12 +475,12 @@ export default function Chat({ userProfile: propProfile, initialSessions, initia
                     <Plus size={18} />
                     <span>Upload Documents</span>
                   </button>
-                  <button onClick={() => { setIsMobileMenuOpen(false); onOpenProfile(); }}>
+                  <button onClick={() => { setIsMobileMenuOpen(false); setIsProfileOpen(true); }}>
                     <Settings size={18} />
                     <span>Profile Settings</span>
                   </button>
                   <div className="menu-divider-h"></div>
-                  <button className="text-red-400" onClick={() => { setIsMobileMenuOpen(false); onLogout(); }}>
+                  <button className="text-red-400" onClick={() => { setIsMobileMenuOpen(false); handleLogout(); }}>
                     <LogOut size={18} />
                     <span>Sign Out</span>
                   </button>
@@ -475,8 +493,8 @@ export default function Chat({ userProfile: propProfile, initialSessions, initia
 
         {/* Navigation Icon to Upload Page */}
         <div className="chat-top-actions">
-          <button 
-            className="action-icon-btn glow-green" 
+          <button
+            className="action-icon-btn glow-green"
             onClick={() => navigate('/upload')}
             title="Upload New Documents"
           >
@@ -497,11 +515,11 @@ export default function Chat({ userProfile: propProfile, initialSessions, initia
             <div className="welcome-hero">
               <h1 className="hero-title">Ready to <span className="text-energy">Assist</span></h1>
               <p className="hero-subtitle">
-                Got technical questions? Ask the AI co-pilot about your 
+                Got technical questions? Ask the AI co-pilot about your
                 uploaded energy files now.
               </p>
             </div>
-            
+
             <div className="status-indicator-grid">
               <div className="status-chip">
                 <span className="chip-dot"></span>
@@ -516,15 +534,15 @@ export default function Chat({ userProfile: propProfile, initialSessions, initia
                 <div className="bubble">
                   {msg.role === 'ai' ? (
                     <>
-                      <TypedMarkdown 
-                        key={`${i}-${msg.content.length}`} 
-                        content={msg.content} 
-                        isStreaming={msg.isStreaming} 
-                        animate={msg.isNew} 
+                      <TypedMarkdown
+                        key={`${i}-${msg.content.length}`}
+                        content={msg.content}
+                        isStreaming={msg.isStreaming}
+                        animate={msg.isNew}
                       />
                       {msg.sources && msg.sources.length > 0 && (
                         <div className="message-actions mt-4 pt-4 border-t border-white/5">
-                          <button 
+                          <button
                             className="text-[10px] uppercase tracking-wider font-bold text-energy opacity-50 hover:opacity-100 transition-opacity flex items-center gap-2"
                             onClick={() => {
                               setTraceSources(msg.sources);
@@ -549,7 +567,7 @@ export default function Chat({ userProfile: propProfile, initialSessions, initia
 
         {activeSession && (
           <div className="chat-input-container">
-            <textarea 
+            <textarea
               className="chat-input"
               rows="1"
               placeholder="Ask about solar energy, power systems..."
@@ -562,7 +580,7 @@ export default function Chat({ userProfile: propProfile, initialSessions, initia
         )}
       </main>
 
-      <ProfileModal 
+      <ProfileModal
         isOpen={isProfileOpen}
         onClose={() => setIsProfileOpen(false)}
         user={userProfile}
@@ -587,7 +605,7 @@ export default function Chat({ userProfile: propProfile, initialSessions, initia
 
             <div className="trace-scroll-area mt-6">
               <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-white/30 mb-6">Recovered Vector Evidence</p>
-              
+
               <div className="space-y-6">
                 {traceSources.map((source, idx) => (
                   <div key={idx} className="trace-card">
@@ -601,7 +619,7 @@ export default function Chat({ userProfile: propProfile, initialSessions, initia
                       </div>
                     </div>
                     <div className="text-sm leading-relaxed text-white/80 font-inter bg-white/5 p-4 rounded-xl border border-white/5 italic">
-                       "{source.text}"
+                      "{source.text}"
                     </div>
                   </div>
                 ))}

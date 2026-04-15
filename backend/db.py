@@ -115,6 +115,16 @@ def get_user_sessions(user_id: str):
     sessions.sort(key=lambda x: x['created_at'], reverse=True)
     return sessions[:15]
 
+def update_session_title(user_id: str, session_id: str, title: str):
+    key = f"session_meta:{user_id}:{session_id}"
+    meta = redis_client.get(key)
+    if meta:
+        data = json.loads(meta)
+        data["title"] = title
+        redis_client.setex(key, RETENTION_SECONDS, json.dumps(data))
+        return True
+    return False
+
 def delete_session(user_id: str, session_id: str):
     # Get associated docs before deleting metadata (Using scoped key)
     meta = redis_client.get(f"session_meta:{user_id}:{session_id}")

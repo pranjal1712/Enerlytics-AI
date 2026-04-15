@@ -73,19 +73,21 @@ export default function Sidebar({
       {/* Main Navigation */}
       <div className="sidebar-nav">
         {/* Chat History Section */}
-        <div 
-          className="nav-group-header" 
-          onClick={() => setIsHistoryOpen(!isHistoryOpen)}
-        >
-          <div className="flex items-center gap-2">
-            <MessageSquare size={16} />
-            <span>Your Chats</span>
+        <div className="sidebar-section">
+          <div 
+            className="nav-group-header" 
+            onClick={() => setIsHistoryOpen(!isHistoryOpen)}
+          >
+            <div className="flex items-center gap-2">
+              <MessageSquare size={16} />
+              <span>Your Chats</span>
+            </div>
+            <ChevronDown size={14} className={isHistoryOpen ? 'rotate-0' : 'rotate-[-90deg]'} style={{ transition: '0.3s' }} />
           </div>
-          <ChevronDown size={14} className={isHistoryOpen ? 'rotate-0' : 'rotate-[-90deg]'} style={{ transition: '0.3s' }} />
-        </div>
 
-        {isHistoryOpen && (
-          <div className="sessions-list">
+          {isHistoryOpen && (
+            <div className="scroll-section">
+              <div className="sessions-list">
             {sessions.map((session) => (
               <div 
                 key={session.id} 
@@ -118,12 +120,14 @@ export default function Sidebar({
                 </div>
               </div>
             ))}
-            {sessions.length === 0 && <div className="empty-history">No recent chats</div>}
+              {sessions.length === 0 && <div className="empty-history" style={{ padding: '0.75rem', fontSize: '0.85rem', color: '#444' }}>No recent chats</div>}
+            </div>
           </div>
         )}
+      </div>
 
         {/* Reports Library Section [NEW] */}
-        <div className="mt-6">
+        <div className="sidebar-section mt-6">
             <div 
                 className="nav-group-header" 
                 onClick={() => setIsLibraryOpen(!isLibraryOpen)}
@@ -136,7 +140,8 @@ export default function Sidebar({
             </div>
 
             {isLibraryOpen && (
-                <div className="sessions-list">
+                <div className="scroll-section">
+                    <div className="sessions-list">
                     {documents.map((doc) => (
                         <div 
                             key={doc.id} 
@@ -172,7 +177,8 @@ export default function Sidebar({
                             </div>
                         </div>
                     ))}
-                    {documents.length === 0 && <div className="empty-history">No reports indexed yet.</div>}
+                    {documents.length === 0 && <div className="empty-history" style={{ padding: '0.75rem', fontSize: '0.85rem', color: '#444' }}>No reports indexed yet.</div>}
+                  </div>
                 </div>
             )}
         </div>

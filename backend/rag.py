@@ -14,7 +14,8 @@ def get_embedding_model():
     if _embedding_model is None:
         print("🚀 [LAZY LOAD] Loading SentenceTransformer (all-MiniLM-L6-v2)...")
         from sentence_transformers import SentenceTransformer
-        _embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
+        # Force CPU device to avoid "meta tensor" errors on certain Windows environments
+        _embedding_model = SentenceTransformer('all-MiniLM-L6-v2', device='cpu')
         print("✅ [LAZY LOAD] Embedding Model Ready.")
     return _embedding_model
 
@@ -174,8 +175,8 @@ def retrieve_and_rerank(query: str, user_id: str, doc_name: str = None):
     return detailed_chunks
 
 def generate_response(query: str, chunks: list, user_id: str, session_id: str = None):
-    # Extract just the text for the LLM context
-    text_list = [c['text'] for c in chunks] if isinstance(chunks[0], dict) else chunks
+    # Extract just the text for the LLM context with safety check for empty list
+    text_list = [c['text'] for c in chunks] if (chunks and isinstance(chunks[0], dict)) else chunks
     context_text = "\n---\n".join(text_list)
     
     # Use secure user-scoped session_id for history (Prevents IDOR)
@@ -210,23 +211,21 @@ def generate_response(query: str, chunks: list, user_id: str, session_id: str = 
     def _call(api_key):
         client = groq.Groq(api_key=api_key)
         
+        system_prompt = (
+            "You are a professional Energy Domain AI Assistant. "
+            "Your task is to answer the user's question ONLY using the provided context and history below.\n\n"
+            "STRICT RULES:\n"
+            "1. If the answer is not explicitly present in the context, briefly explain that the provided documents "
+            "do not contain specific information about this topic. Be professional.\n"
+            "2. NEVER use outside knowledge to answer if the context is missing info.\n"
+            "3. Do not repeat the same phrase multiple times.\n\n"
+            f"RELEVANT DOCUMENT CONTEXT:\n{context_text if context_text else 'No relevant documents found.'}\n\n"
+            f"RECENT HISTORY:\n{history}"
+        )
+        
         messages = [
-            {
-                "role": "system", 
-                "content": "You are a professional Energy Domain AI Assistant. ONLY talk about energy. Answer ONLY using the provided context. If the context does not contain the answer, say 'Not Available in provided energy documents'."
-            },
-            {
-                "role": "system",
-                "content": f"Relevant Document Context:\n{context_text}"
-            },
-            {
-                "role": "system",
-                "content": f"Recent Conversation History Summary:\n{history}"
-            },
-            {
-                "role": "user", 
-                "content": query
-            }
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": query}
         ]
         
         return client.chat.completions.create(

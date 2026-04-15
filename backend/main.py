@@ -1,5 +1,6 @@
 from dotenv import load_dotenv
 import os
+import json
 # Load environment variables from the root .env file
 load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), "..", ".env"))
 
@@ -22,7 +23,10 @@ import os
 app = FastAPI(title="EnergyMind RAG API")
 
 # Setup CORS - Use specific origin for cookies
-allowed_origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000,http://localhost:5173").split(",")
+allowed_origins = os.getenv(
+    "ALLOWED_ORIGINS", 
+    "http://localhost:3000,http://127.0.0.1:3000,http://localhost:5173,http://127.0.0.1:5173"
+).split(",")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
@@ -148,7 +152,7 @@ async def reset_password(data: dict):
     if user_data:
         user_data['password'] = get_password_hash(new_password)
         from db import redis_client
-        import json
+        from db import redis_client
         redis_client.set(f"user:{email}", json.dumps(user_data))
         delete_reset_token(token)
         return {"message": "Password reset successfully"}
@@ -306,7 +310,7 @@ async def list_chats(user: str = Depends(get_current_user)):
 @app.get("/chat/history")
 async def get_history(session_id: str, user: str = Depends(get_current_user)):
     from db import redis_client
-    import json
+    from db import redis_client
     
     # SECURITY: Verify that the session_id belongs to this user before fetching
     user_sessions = redis_client.smembers(f"user_sessions:{user}")
@@ -371,17 +375,25 @@ async def get_user_status(user: str = Depends(get_current_user)):
         "has_documents": has_docs
     }
 
-@app.delete("/chats/{session_id}")
-async def remove_chat(session_id: str, user: str = Depends(get_current_user)):
-    from db import delete_session
-    from rag import delete_vector_data
-    
-    # Deep Purge: Redis metadata first, then Qdrant vectors
-    doc_names = delete_session(user, session_id)
-    if doc_names:
-        delete_vector_data(user, doc_names)
-        
     return {"message": "Workspace cleared", "purged_docs": doc_names}
+
+@app.patch("/chats/{session_id}/title")
+async def rename_chat(session_id: str, request: Request, user: str = Depends(get_current_user)):
+    from db import update_session_title
+    data = await request.json()
+    new_title = data.get("title")
+    if not new_title:
+        raise HTTPException(status_code=400, detail="Title is required")
+    
+    # Trim title if too long
+    if len(new_title) > 60:
+        new_title = new_title[:57] + "..."
+    
+    success = update_session_title(user, session_id, new_title)
+    if not success:
+        raise HTTPException(status_code=404, detail="Session not found")
+        
+    return {"message": "Session renamed", "new_title": new_title}
 
 # --- USER PROFILE ---
 
@@ -401,7 +413,6 @@ async def get_profile(user: str = Depends(get_current_user)):
 @app.post("/user/profile")
 async def update_profile(request: Request, user: str = Depends(get_current_user)):
     from auth import get_user_by_email
-    import json
     from db import redis_client
     
     data = await request.json()
@@ -443,7 +454,6 @@ async def chat(request: Request, user: str = Depends(get_current_user)):
     cached = cache_get(cache_key)
     if cached:
         # Save Cached hit to history as well (JSON STYLE)
-        import json
         hist_raw = redis_client.get(history_key) or "[]"
         if isinstance(hist_raw, bytes): hist_raw = hist_raw.decode('utf-8')
         try:
@@ -463,7 +473,6 @@ async def chat(request: Request, user: str = Depends(get_current_user)):
     response_data = generate_response(query, chunks, user, session_id)
     
     # EARLY PERSISTENCE: Save the user question immediately so it's not lost on refresh
-    import json
     hist_raw = redis_client.get(history_key) or "[]"
     if isinstance(hist_raw, bytes): hist_raw = hist_raw.decode('utf-8')
     try:
@@ -483,7 +492,6 @@ async def chat(request: Request, user: str = Depends(get_current_user)):
 
         if isinstance(response_data, str):
             # Save User + Error to history (JSON STYLE)
-            import json
             hist_raw = redis_client.get(history_key) or "[]"
             if isinstance(hist_raw, bytes): hist_raw = hist_raw.decode('utf-8')
             try:
@@ -504,7 +512,6 @@ async def chat(request: Request, user: str = Depends(get_current_user)):
                 yield content
         
         # FINAL COMMIT: Save only the AI response (User was saved early)
-        import json
         cache_set(cache_key, full_text)
         hist_raw = redis_client.get(history_key) or "[]"
         if isinstance(hist_raw, bytes): hist_raw = hist_raw.decode('utf-8')

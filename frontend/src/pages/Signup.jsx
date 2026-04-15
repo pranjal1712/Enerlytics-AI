@@ -89,15 +89,15 @@ export default function Signup({ setAuth, setHasDocs }) {
   return (
     <div className="auth-premium-card auth-sync-height">
       {/* Glowing Header */}
-      <div className="auth-glow-header pt-6">
-        <div className="flex items-center gap-3 mb-8">
+      <div className="auth-glow-header pt-12">
+        <div className="flex items-center gap-3 mb-6">
           <div className="logo-brand-container">
             <img src="/logo.png" alt="Logo" className="logo-brand-img" />
           </div>
           <span className="text-2xl font-bold tracking-tight text-white">Enerlytics AI</span>
         </div>
-        <h1 className="text-3xl font-bold text-white tracking-wide">Create Account</h1>
-        <p className="text-gray-400 text-sm mt-1">Join the future of Energy Analysis</p>
+        <h1 className="text-2xl font-bold text-white tracking-wide">Create Account</h1>
+        <p className="text-gray-400 text-sm mt-1">Join us to start analyzing your energy data</p>
       </div>
 
       <div className="p-8">
