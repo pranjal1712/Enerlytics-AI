@@ -1,6 +1,7 @@
 import os
 import uuid
 import db
+import gc
 from qdrant_client.http import models
 import openai
 import groq
@@ -124,6 +125,12 @@ def ingest_document(file_path, user_id, document_name):
             )
             if not upsert_res:
                  print(f"⚠️ Chunk {i} upsert returned no response. Check Qdrant status.")
+        
+        print(f"✅ Document {document_name} ingested successfully.")
+        
+        # Explicitly free memory after heavy PDF processing
+        gc.collect()
+        return True
     except Exception as e:
         print(f"❌ Ingestion Error: {e}")
     finally:

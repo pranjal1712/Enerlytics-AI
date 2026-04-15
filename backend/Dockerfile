@@ -22,4 +22,5 @@ COPY . .
 EXPOSE 8000
 
 # Command to run the application using Gunicorn for better production scaling
-CMD ["gunicorn", "-w", "2", "-k", "uvicorn.workers.UvicornWorker", "main:app", "--bind", "0.0.0.0:8000", "--timeout", "120"]
+# Single worker used to stay within 512MB RAM limit on Render Free Tier
+CMD ["gunicorn", "-w", "1", "-k", "uvicorn.workers.UvicornWorker", "main:app", "--bind", "0.0.0.0:8000", "--timeout", "120"]
