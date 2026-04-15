@@ -32,11 +32,33 @@ export default function Chat({ userProfile: propProfile, initialSessions, initia
   const [traceSources, setTraceSources] = useState([]);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [searchStatus, setSearchStatus] = useState("Searching technical assets...");
 
 
   const messagesEndRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
+  const searchSteps = [
+    "Searching technical assets...",
+    "Analyzing energy vectors...",
+    "Cross-referencing documents...",
+    "⚡ Synthesizing response...",
+    "Neural mapping complete..."
+  ];
+
+  useEffect(() => {
+    let interval;
+    if (isLoading) {
+      let step = 0;
+      setSearchStatus(searchSteps[0]);
+      interval = setInterval(() => {
+        step = (step + 1) % searchSteps.length;
+        setSearchStatus(searchSteps[step]);
+      }, 1500);
+    }
+    return () => clearInterval(interval);
+  }, [isLoading]);
 
   // Initial Data Fetch - Unified for speed
   const didInit = useRef(false);
@@ -302,6 +324,7 @@ export default function Chat({ userProfile: propProfile, initialSessions, initia
       }).catch(err => console.error("Rename failed:", err));
     }
 
+    setIsLoading(true);
     try {
       const res = await fetch(getApiUrl('/api/chat'), {
         method: 'POST',
@@ -328,6 +351,7 @@ export default function Chat({ userProfile: propProfile, initialSessions, initia
         return;
       }
 
+      setIsLoading(false);
       setMessages(prev => [...prev, { role: 'ai', content: '', isNew: true, isStreaming: true }]);
       const reader = res.body.getReader();
       const decoder = new TextDecoder('utf-8');
@@ -390,6 +414,8 @@ export default function Chat({ userProfile: propProfile, initialSessions, initia
       });
     } catch (err) {
       console.error(err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -561,6 +587,18 @@ export default function Chat({ userProfile: propProfile, initialSessions, initia
                 </div>
               </div>
             ))}
+            {isLoading && (
+              <div className="message ai">
+                <div className="bubble thinking-bubble">
+                  <div className="flex items-center gap-3">
+                    <div className="loading-pulse-neural"></div>
+                    <span className="text-xs font-mono text-energy/70 tracking-tighter animate-pulse">
+                      {searchStatus}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
             <div ref={messagesEndRef} />
           </div>
         )}
