@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useGoogleLogin } from '@react-oauth/google';
 import { Mail, Lock, Loader2 } from 'lucide-react';
-import { getApiUrl } from '../api';
+import { apiFetch } from '../api';
 
 export default function Login({ setAuth, setHasDocs }) {
   const [email, setEmail] = useState('');
@@ -22,20 +22,24 @@ export default function Login({ setAuth, setHasDocs }) {
       setLoading(true);
       setError('');
       
-      const res = await fetch(getApiUrl('/api/auth/login'), {
+      const res = await apiFetch('/auth/login', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
         body: JSON.stringify({ email, password, username: email })
       });
       if (res.ok) {
+        const loginData = await res.json();
+        const token = loginData.access_token;
+        if (token) {
+          localStorage.setItem('access_token', token);
+        }
+
         // Fetch new status
-        const statusRes = await fetch(getApiUrl('/api/user/status'), { credentials: 'include' });
+        const statusRes = await apiFetch('/workspace/init');
         if (statusRes.ok) {
           const statusData = await statusRes.json();
           setAuth(true);
-          setHasDocs(statusData.has_documents);
-          navigate(statusData.has_documents ? '/chat' : '/upload');
+          setHasDocs(statusData.status.has_documents);
+          navigate(statusData.status.has_documents ? '/chat' : '/upload');
         }
       } else {
         setError('Invalid email or password');
@@ -50,19 +54,23 @@ export default function Login({ setAuth, setHasDocs }) {
   const handleGoogleSuccess = async (tokenResponse) => {
     try {
       setLoading(true);
-      const res = await fetch(getApiUrl('/api/auth/google'), {
+      const res = await apiFetch('/auth/google', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
         body: JSON.stringify({ access_token: tokenResponse.access_token })
       });
       if (res.ok) {
-        const statusRes = await fetch(getApiUrl('/api/user/status'), { credentials: 'include' });
+        const loginData = await res.json();
+        const token = loginData.access_token;
+        if (token) {
+          localStorage.setItem('access_token', token);
+        }
+
+        const statusRes = await apiFetch('/workspace/init');
         if (statusRes.ok) {
           const statusData = await statusRes.json();
           setAuth(true);
-          setHasDocs(statusData.has_documents);
-          navigate(statusData.has_documents ? '/chat' : '/upload');
+          setHasDocs(statusData.status.has_documents);
+          navigate(statusData.status.has_documents ? '/chat' : '/upload');
         }
       } else {
         setError('Google login failed');

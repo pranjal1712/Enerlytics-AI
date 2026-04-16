@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { FileText, File, ArrowLeft, Loader2, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import CookieConsent from '../components/CookieConsent';
-import { getApiUrl } from '../api';
+import { apiFetch } from '../api';
+import NeuralBoot from '../components/NeuralBoot';
 
 export default function Upload({ setHasDocs, refreshWorkspace }) {
   const [isUploading, setIsUploading] = useState(false);
@@ -26,9 +27,8 @@ export default function Upload({ setHasDocs, refreshWorkspace }) {
     }
     
     try {
-      const res = await fetch(getApiUrl('/api/upload'), {
+      const res = await apiFetch('/upload', {
         method: 'POST',
-        credentials: 'include',
         body: formData,
       });
 

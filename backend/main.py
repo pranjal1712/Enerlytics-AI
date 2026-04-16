@@ -193,9 +193,19 @@ async def reset_password(data: dict):
     
     raise HTTPException(status_code=404, detail="User not found")
 
-# Dependency for getting current user from secure cookie
+# Dependency for getting current user from secure cookie or Authorization header
 def get_current_user(request: Request):
-    token = request.cookies.get("access_token")
+    token = None
+    
+    # Check Authorization Header first (preferred for production cross-site)
+    auth_header = request.headers.get("Authorization")
+    if auth_header and auth_header.startswith("Bearer "):
+        token = auth_header.split(" ")[1]
+    
+    # Fallback to cookies
+    if not token:
+        token = request.cookies.get("access_token")
+        
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
     

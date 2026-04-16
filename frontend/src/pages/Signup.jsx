@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { User as UserIcon, Mail, Lock, Loader2 } from 'lucide-react';
-import { getApiUrl } from '../api';
+import { apiFetch } from '../api';
 
 export default function Signup({ setAuth, setHasDocs }) {
   const [email, setEmail] = useState('');
@@ -17,14 +17,17 @@ export default function Signup({ setAuth, setHasDocs }) {
       setLoading(true);
       setError('');
 
-      const res = await fetch(getApiUrl('/api/auth/signup'), {
+      const res = await apiFetch('/auth/signup', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
         body: JSON.stringify({ email, password, username })
       });
       if (res.ok) {
-        // Since we now set the cookie in the backend, we can just update state and navigate
+        const signupData = await res.json();
+        const token = signupData.access_token;
+        if (token) {
+          localStorage.setItem('access_token', token);
+        }
+
         if (setAuth) setAuth(true);
         if (setHasDocs) setHasDocs(false);
         navigate('/upload');
@@ -41,19 +44,23 @@ export default function Signup({ setAuth, setHasDocs }) {
   const handleGoogleSuccess = async (tokenResponse) => {
     try {
       setLoading(true);
-      const res = await fetch(getApiUrl('/api/auth/google'), {
+      const res = await apiFetch('/auth/google', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
         body: JSON.stringify({ access_token: tokenResponse.access_token })
       });
       if (res.ok) {
-        const statusRes = await fetch(getApiUrl('/api/user/status'), { credentials: 'include' });
+        const loginData = await res.json();
+        const token = loginData.access_token;
+        if (token) {
+          localStorage.setItem('access_token', token);
+        }
+
+        const statusRes = await apiFetch('/workspace/init');
         if (statusRes.ok) {
           const statusData = await statusRes.json();
           if (setAuth) setAuth(true);
-          if (setHasDocs) setHasDocs(statusData.has_documents);
-          navigate(statusData.has_documents ? '/chat' : '/upload');
+          if (setHasDocs) setHasDocs(statusData.status.has_documents);
+          navigate(statusData.status.has_documents ? '/chat' : '/upload');
         }
       } else {
         setError('Google signup failed');

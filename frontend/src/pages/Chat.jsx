@@ -6,7 +6,7 @@ import Sidebar from '../components/Sidebar';
 import ProfileModal from '../components/ProfileModal';
 import NeuralBoot from '../components/NeuralBoot';
 import TypedMarkdown from '../components/TypedMarkdown';
-import { getApiUrl } from '../api';
+import { apiFetch } from '../api';
 
 export default function Chat({ userProfile: propProfile, initialSessions, initialDocs, refreshWorkspace, setAuth }) {
   const [messages, setMessages] = useState([]);
@@ -109,9 +109,8 @@ export default function Chat({ userProfile: propProfile, initialSessions, initia
 
   const handleForceNewChat = async () => {
     try {
-      const res = await fetch(getApiUrl('/api/chats/new'), {
-        method: 'POST',
-        credentials: 'include'
+      const res = await apiFetch('/chats/new', {
+        method: 'POST'
       });
       if (res.ok) {
         const data = await res.json();
@@ -129,7 +128,7 @@ export default function Chat({ userProfile: propProfile, initialSessions, initia
   // Local state update functions for when children mutate data
   const fetchSessions = async () => {
     try {
-      const res = await fetch(getApiUrl('/api/chats'), { credentials: 'include' });
+      const res = await apiFetch('/chats');
       if (res.ok) {
         const data = await res.json();
         setSessions(data);
@@ -142,7 +141,7 @@ export default function Chat({ userProfile: propProfile, initialSessions, initia
   const fetchChatHistory = async (sid) => {
     setIsHistoryLoading(true);
     try {
-      const res = await fetch(getApiUrl(`/api/chat/history?session_id=${sid}`), { credentials: 'include' });
+      const res = await apiFetch(`/chat/history?session_id=${sid}`);
       if (res.ok) {
         const data = await res.json();
         const formatted = data.map(m => ({
@@ -161,9 +160,8 @@ export default function Chat({ userProfile: propProfile, initialSessions, initia
 
   const handleNewChat = async () => {
     try {
-      const res = await fetch(getApiUrl('/api/chats/new'), {
-        method: 'POST',
-        credentials: 'include'
+      const res = await apiFetch('/chats/new', {
+        method: 'POST'
       });
       if (res.ok) {
         const data = await res.json();
@@ -207,9 +205,8 @@ export default function Chat({ userProfile: propProfile, initialSessions, initia
 
   const handleDeleteSession = async (sid) => {
     try {
-      await fetch(getApiUrl(`/api/chats/${sid}`), {
-        method: 'DELETE',
-        credentials: 'include'
+      await apiFetch(`/chats/${sid}`, {
+        method: 'DELETE'
       });
       // Optimistic Update: Filter BOTH sessions and documents
       setSessions(sessions.filter(s => s.id !== sid));
@@ -233,9 +230,8 @@ export default function Chat({ userProfile: propProfile, initialSessions, initia
     let currentSession = activeSession;
     if (!currentSession) {
       try {
-        const res = await fetch(getApiUrl('/api/chats/new'), {
-          method: 'POST',
-          credentials: 'include'
+        const res = await apiFetch('/chats/new', {
+          method: 'POST'
         });
         if (res.ok) {
           currentSession = await res.json();
@@ -257,9 +253,8 @@ export default function Chat({ userProfile: propProfile, initialSessions, initia
     formData.append('file', file);
 
     try {
-      const res = await fetch(getApiUrl('/api/upload'), {
+      const res = await apiFetch('/upload', {
         method: 'POST',
-        credentials: 'include',
         body: formData,
       });
 
@@ -310,10 +305,9 @@ export default function Chat({ userProfile: propProfile, initialSessions, initia
     // Auto-rename session on first message to reflect the user's question
     if (messages.length === 0 && activeSession?.title === "New Analysis") {
       const newTitle = queryForTitle.length > 50 ? queryForTitle.substring(0, 47) + "..." : queryForTitle;
-      fetch(getApiUrl(`/api/chats/${activeSession.id}/title`), {
+      apiFetch(`/chats/${activeSession.id}/title`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
         body: JSON.stringify({ title: newTitle })
       }).then(res => {
         if (res.ok) {
@@ -326,10 +320,9 @@ export default function Chat({ userProfile: propProfile, initialSessions, initia
 
     setIsLoading(true);
     try {
-      const res = await fetch(getApiUrl('/api/chat'), {
+      const res = await apiFetch('/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
         body: JSON.stringify({
           query: input,
           session_id: activeSession?.id
