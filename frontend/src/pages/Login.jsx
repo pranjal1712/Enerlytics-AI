@@ -30,6 +30,7 @@ export default function Login({ setAuth, setHasDocs }) {
         const loginData = await res.json();
         const token = loginData.access_token;
         if (token) {
+          console.log("✅ Token received and saved to storage");
           localStorage.setItem('access_token', token);
         }
 
@@ -62,6 +63,7 @@ export default function Login({ setAuth, setHasDocs }) {
         const loginData = await res.json();
         const token = loginData.access_token;
         if (token) {
+          console.log("✅ Google Auth Token saved successfully");
           localStorage.setItem('access_token', token);
         }
 
