@@ -201,16 +201,20 @@ async def reset_password(data: dict):
 def get_current_user(request: Request):
     token = None
     
-    # Check Authorization Header first (preferred for production cross-site)
+    # Debug: Log incoming headers (be careful not to log sensitive data in real production)
     auth_header = request.headers.get("Authorization")
+    print(f"🔍 [AUTH DEBUG] Request to {request.url.path} | Auth Header Present: {bool(auth_header)}")
+    
     if auth_header and auth_header.startswith("Bearer "):
         token = auth_header.split(" ")[1]
     
-    # Fallback to cookies
     if not token:
         token = request.cookies.get("access_token")
+        if token:
+            print("🍪 [AUTH DEBUG] Fallback to cookie auth")
         
     if not token:
+        print("❌ [AUTH DEBUG] No token found in headers or cookies")
         raise HTTPException(status_code=401, detail="Not authenticated")
     
     try:
@@ -218,7 +222,8 @@ def get_current_user(request: Request):
         if not payload or not payload.get("sub"):
             raise HTTPException(status_code=401, detail="Invalid session")
         return payload.get("sub")
-    except Exception:
+    except Exception as e:
+        print(f"⚠️ [AUTH DEBUG] Token validation failed: {str(e)}")
         raise HTTPException(status_code=401, detail="Session validation failed")
 
 @app.get("/auth/status")
