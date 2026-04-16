@@ -32,15 +32,19 @@ print(f"🚀 [AUTH INIT] Environment: {os.getenv('ENVIRONMENT', 'local')} | Secu
 # Setup CORS - Use specific origin for cookies
 raw_origins = os.getenv(
     "ALLOWED_ORIGINS", 
-    "http://localhost:3000,http://127.0.0.1:3000,http://localhost:5173,http://127.0.0.1:5173"
-)
-allowed_origins = [o.strip() for o in raw_origins.split(",") if o.strip()]
+    "https://enerlytics-ai-fawn.vercel.app,https://enerlytics-ai-snowy.vercel.app,http://localhost:3000,http://localhost:5173"
+).split(",")
+
+origins = [o.strip() for o in raw_origins if o.strip()]
+print(f"🌍 [CORS INIT] Allowed Origins: {origins}")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=allowed_origins,
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["*"]
 )
 
 @app.on_event("startup")
