@@ -27,6 +27,8 @@ IS_PROD = os.getenv("ENVIRONMENT") == "production"
 COOKIE_SECURE = True if IS_PROD else False
 COOKIE_SAMESITE = "none" if IS_PROD else "lax"
 
+print(f"🚀 [AUTH INIT] Environment: {os.getenv('ENVIRONMENT', 'local')} | Secure: {COOKIE_SECURE} | SameSite: {COOKIE_SAMESITE}")
+
 # Setup CORS - Use specific origin for cookies
 raw_origins = os.getenv(
     "ALLOWED_ORIGINS", 
