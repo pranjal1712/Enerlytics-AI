@@ -17,7 +17,6 @@ class EnergyAnalysisAgent:
         Analyzes a document snippet to determine if it is energy-related.
         Returns a dictionary with validation status and reasoning.
         """
-        # Truncate snippet to 2000 chars for speed/cost
         content = text_snippet[:2000]
         
         prompt = f"""
@@ -32,11 +31,6 @@ class EnergyAnalysisAgent:
         - Sustainability and carbon emissions in energy
         - High-voltage engineering
 
-        NON-ENERGY TOPICS INCLUDE:
-        - General finance (without energy focus)
-        - Cooking, Travel, General Lifestyle
-        - Generic software tutorials or non-energy technical docs
-
         OUTPUT FORMAT (Strict JSON):
         {{
             "is_energy_related": boolean,
@@ -49,22 +43,24 @@ class EnergyAnalysisAgent:
         {content}
         """
 
-        try:
-            client = groq.Groq(api_key=groq_rotator.get_key())
-            response = client.chat.completions.create(
+        def _call_groq(api_key):
+            client = groq.Groq(api_key=api_key)
+            return client.chat.completions.create(
                 model=self.model,
                 messages=[{"role": "user", "content": prompt}],
-                temperature=0.1, # Low temperature for consistent JSON
+                temperature=0.1,
                 response_format={"type": "json_object"}
             )
-            
+
+        try:
+            response = execute_with_rotation(groq_rotator, _call_groq)
             result = json.loads(response.choices[0].message.content)
             print(f"🕵️ [AGENT VERDICT] {result['category']} | Valid: {result['is_energy_related']}")
             return result
         except Exception as e:
             print(f"❌ [AGENT ERROR] Failed to analyze domain: {e}")
             return {
-                "is_energy_related": True, # Fallback to True to avoid blocking if AI is down
+                "is_energy_related": True,
                 "category": "Unchecked",
                 "reasoning": f"AI Agent encountered an error: {str(e)}",
                 "confidence": 0.0
@@ -74,7 +70,7 @@ class EnergyAnalysisAgent:
         """
         Generates a summary and suggested questions for the document.
         """
-        content = text_snippet[:5000] # Use more context for summary
+        content = text_snippet[:5000]
         
         prompt = f"""
         You are an Energy Data Analyst. Analyze this technical document snippet and provide a summary.
@@ -93,17 +89,20 @@ class EnergyAnalysisAgent:
         {content}
         """
 
-        try:
-            client = groq.Groq(api_key=groq_rotator.get_key())
-            response = client.chat.completions.create(
+        def _call_groq(api_key):
+            client = groq.Groq(api_key=api_key)
+            return client.chat.completions.create(
                 model=self.model,
                 messages=[{"role": "user", "content": prompt}],
                 temperature=0.3,
                 response_format={"type": "json_object"}
             )
+
+        try:
+            response = execute_with_rotation(groq_rotator, _call_groq)
             return json.loads(response.choices[0].message.content)
         except Exception as e:
-            print(f"❌ [AGENT ERROR] Failed to generate insight. This usually happens if GROQ_API_KEY is missing or invalid in Render. Error: {e}")
+            print(f"❌ [AGENT ERROR] Failed to generate insight. Error: {e}")
             return {
                 "summary": "Document successfully indexed and ready for detailed analysis.",
                 "suggested_questions": ["What are the key technical specifications?", "Check for sustainability impacts?", "Summary of findings?"]
