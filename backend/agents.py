@@ -1,6 +1,6 @@
 import json
 import groq
-from rotator import groq_rotator
+from rotator import groq_rotator, execute_with_rotation
 
 class EnergyAnalysisAgent:
     """

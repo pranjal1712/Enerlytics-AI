@@ -425,14 +425,14 @@ export default function Chat({ userProfile: propProfile, initialSessions, initia
         method: 'POST',
         credentials: 'include'
       });
-      // 🛡️ Clear local storage to ensure frontend session is wiped
+    } catch (err) {
+      console.error("Logout network error (ignored):", err);
+    } finally {
+      // 🛡️ GUARANTEED CLEANUP: Always clear local session regardless of server status
       localStorage.removeItem('access_token');
       localStorage.removeItem('user_email');
-      
       if (setAuth) setAuth(false);
       navigate('/login');
-    } catch (err) {
-      console.error("Logout failed:", err);
     }
   };
 

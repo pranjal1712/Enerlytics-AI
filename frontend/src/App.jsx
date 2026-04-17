@@ -98,6 +98,7 @@ function App() {
                 <Chat 
                   key={INITIAL_LOAD_ID} // Forces fresh reset on every browser reload
                   userProfile={userProfile} 
+                  setAuth={setIsAuthenticated}
                   initialSessions={sessions} 
                   initialDocs={documents}
                   refreshWorkspace={refreshWorkspace}
