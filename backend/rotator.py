@@ -63,7 +63,7 @@ def execute_with_rotation(rotator: APIKeyRotator, func, *args, **kwargs):
                 kwargs['api_key'] = key
                 return func(*args, **kwargs)
             except Exception as e:
-                print(f"Key failed, rotating... Error: {e}")
+                print(f"[RETRY] Key failed, rotating... Error: {e}")
                 last_exception = e
             
     raise Exception("The AI Server is currently under heavy load or facing technical difficulties. Please try again after some time.")

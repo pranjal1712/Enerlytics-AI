@@ -127,7 +127,8 @@ async def logout(response: Response):
         key="access_token", 
         httponly=True, 
         samesite=COOKIE_SAMESITE, 
-        secure=COOKIE_SECURE
+        secure=COOKIE_SECURE,
+        path="/"
     )
     return {"message": "Logged out successfully"}
 
