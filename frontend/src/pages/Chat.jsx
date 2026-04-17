@@ -425,6 +425,10 @@ export default function Chat({ userProfile: propProfile, initialSessions, initia
         method: 'POST',
         credentials: 'include'
       });
+      // 🛡️ Clear local storage to ensure frontend session is wiped
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('user_email');
+      
       if (setAuth) setAuth(false);
       navigate('/login');
     } catch (err) {

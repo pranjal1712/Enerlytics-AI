@@ -334,6 +334,10 @@ async def upload_document(
             if not first_text:
                 first_text = text
             
+            print(f"[DEBUG] Document validation passed. Triggering AI Insight... (Text length: {len(first_text)})")
+            insight = energy_agent.generate_document_insight(first_text)
+            print(f"[DEBUG] AI Insight generated: {bool(insight)}")
+            
             # 2. Register & Queue
             doc_id = str(uuid.uuid4())
             doc_info = register_document(user, file.filename, doc_id)
