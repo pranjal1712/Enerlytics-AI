@@ -55,10 +55,11 @@ export default function Upload({ setHasDocs, refreshWorkspace }) {
         }, interval);
 
       } else {
-        const error = await res.json();
-        setUploadError(error.detail || "Upload rejected. Energy documents only.");
+        const errorData = await res.json();
+        setUploadError(errorData.detail || "Upload rejected. Energy documents only.");
         setUploadingType(null);
-        setTimeout(() => setUploadError(null), 6000);
+        // Leave error longer if it's a specific technical message
+        setTimeout(() => setUploadError(null), 10000);
       }
     } catch (err) {
       console.error(err);

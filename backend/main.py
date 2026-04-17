@@ -308,9 +308,13 @@ async def upload_document(
             elif file.filename.lower().endswith(('.docx', '.doc')):
                 text = extract_text_from_docx(tmp_path)
             
+            if not text.strip():
+                os.remove(tmp_path)
+                raise HTTPException(status_code=400, detail=f"File {file.filename} appears to be a scanned image or empty. Please use a text-based PDF.")
+
             if not validate_domain_keywords(text):
                 os.remove(tmp_path)
-                continue 
+                raise HTTPException(status_code=400, detail=f"File {file.filename} is not a valid Energy document. Only technical energy data is allowed.")
 
             if not first_text:
                 first_text = text

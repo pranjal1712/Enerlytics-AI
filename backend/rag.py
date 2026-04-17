@@ -42,7 +42,10 @@ def validate_domain_keywords(text: str) -> bool:
         'turbine', 'battery', 'voltage', 'current', 'thermal', 'hydroelectric',
         'nuclear', 'consumption', 'generation', 'sustainability', 'biomass',
         'substation', 'distribution', 'megawatt', 'kilowatt', 'energy', 
-        'analysis', 'market', 'power', 'report', 'supply', 'demand', 'infrastructure'
+        'analysis', 'market', 'power', 'report', 'supply', 'demand', 'infrastructure',
+        'net-zero', 'decarbonization', 'esg', 'photovoltaics', 'inverter', 'anode', 
+        'cathode', 'lithium', 'electric vehicle', 'smart meter', 'renewables',
+        'hydrogen', 'fusion', 'geothermal', 'petroleum', 'methane'
     }
     text_lower = text.lower()
     found_keywords = {kw for kw in energy_keywords if kw in text_lower}
