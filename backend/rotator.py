@@ -25,7 +25,7 @@ class APIKeyRotator:
                     if not single_key.startswith("your-"):
                         self.keys.append(single_key)
             
-        print(f"🔑 [ROTATOR] Initialized {env_prefix} with {len(self.keys)} active keys.")
+        print(f"[ROTATOR] Initialized {env_prefix} with {len(self.keys)} active keys.")
 
     def get_key(self) -> str:
         if not self.keys:
@@ -49,7 +49,7 @@ def execute_with_rotation(rotator: APIKeyRotator, func, *args, **kwargs):
     
     for attempt in range(max_attempts):
         if attempt > 0:
-            print(f"⚠️ API attempt {attempt} failed. Waiting {delays[attempt]}s before retry...")
+            print(f"[RETRY] API attempt {attempt} failed. Waiting {delays[attempt]}s before retry...")
             time.sleep(delays[attempt])
             
         keys = list(rotator.get_all_keys())

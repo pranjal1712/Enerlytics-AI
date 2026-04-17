@@ -13,11 +13,11 @@ _embedding_model = None
 def get_embedding_model():
     global _embedding_model
     if _embedding_model is None:
-        print("🚀 [LAZY LOAD] Loading SentenceTransformer (all-MiniLM-L6-v2)...")
+        print("[LAZY LOAD] Loading SentenceTransformer (all-MiniLM-L6-v2)...")
         from sentence_transformers import SentenceTransformer
         # Force CPU device to avoid "meta tensor" errors on certain Windows environments
         _embedding_model = SentenceTransformer('all-MiniLM-L6-v2', device='cpu')
-        print("✅ [LAZY LOAD] Embedding Model Ready.")
+        print("[LAZY LOAD] Embedding Model Ready.")
     return _embedding_model
 
 class TokenOptimizer:
@@ -129,18 +129,18 @@ def ingest_document(file_path, user_id, document_name):
             if not upsert_res:
                  print(f"⚠️ Chunk {i} upsert returned no response. Check Qdrant status.")
         
-        print(f"✅ Document {document_name} ingested successfully.")
+        print(f"[SUCCESS] Document {document_name} ingested successfully.")
         
         # Explicitly free memory after heavy PDF processing
         gc.collect()
         return True
     except Exception as e:
-        print(f"❌ Ingestion Error: {e}")
+        print(f"[ERROR] Ingestion Failed: {e}")
     finally:
         # AUTO-CLEANUP: Always remove the temp file to save disk space
         if os.path.exists(file_path):
             os.remove(file_path)
-            print(f"🧹 Auto-Cleanup: Removed temporary file {document_name}")
+            print(f"[CLEANUP] Auto-Cleanup: Removed temporary file {document_name}")
 
 def retrieve_and_rerank(query: str, user_id: str, doc_name: str = None):
     # Vectorize query using Local Model
@@ -169,7 +169,7 @@ def retrieve_and_rerank(query: str, user_id: str, doc_name: str = None):
             limit=10
         )
     except Exception as e:
-        print(f"❌ Search failed: {e}")
+        print(f"[ERROR] Search failed: {e}")
         res = []
         
     # Return structured metadata including scores and source filenames
@@ -271,6 +271,6 @@ def delete_vector_data(user_id: str, doc_names: list[str]):
                 )
             )
         )
-        print(f"✅ Vector Cleanup: Purged {len(doc_names)} technical reports from Qdrant.")
+        print(f"[SUCCESS] Vector Cleanup: Purged {len(doc_names)} technical reports from Qdrant.")
     except Exception as e:
-        print(f"❌ Vector Purge Failed: {e}")
+        print(f"[ERROR] Vector Purge Failed: {e}")

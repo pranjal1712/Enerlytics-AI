@@ -11,10 +11,10 @@ import fakeredis
 REDIS_URL = os.getenv("REDIS_URL")
 
 if REDIS_URL:
-    print(f"📡 Connecting to Cloud Redis...")
+    print(f"[INFO] Connecting to Cloud Redis...")
     redis_client = redis.from_url(REDIS_URL, decode_responses=True)
 else:
-    print("⚠️ No REDIS_URL found. Using In-Memory Fakeredis (Data will be lost on restart).")
+    print("[WARNING] No REDIS_URL found. Using In-Memory Fakeredis (Data will be lost on restart).")
     redis_client = redis.StrictRedis(host='localhost', port=6379, db=0, decode_responses=True)
 
 qdrant_client_instance = None 
@@ -30,12 +30,12 @@ def init_qdrant():
     # Fast Initialization - Don't block for full collection scan yet
     try:
         if url and api_key:
-            print(f"🌐 [ASYNC] Initializing Qdrant Cloud Client...")
+            print(f"[ASYNC] Initializing Qdrant Cloud Client...")
             qdrant_client_instance = QdrantClient(url=url, api_key=api_key, timeout=5)
         else:
             raise ValueError("Qdrant credentials missing")
     except Exception as e:
-        print(f"⚠️ [FALLBACK] Qdrant Cloud failed ({e}). Using Local In-Memory.")
+        print(f"[WARNING] [FALLBACK] Qdrant Cloud failed ({e}). Using Local In-Memory.")
         qdrant_client_instance = QdrantClient(":memory:")
     
     return qdrant_client_instance
@@ -60,7 +60,7 @@ def ensure_collections():
                     collection_name=idx,
                     vectors_config=models.VectorParams(size=dim, distance=models.Distance.COSINE)
                 )
-        print("✅ Collections Verified.")
+        print("[SUCCESS] Collections Verified.")
     except Exception as e:
         print(f"⚠️ Collection check failed: {e}")
 

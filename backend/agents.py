@@ -10,7 +10,7 @@ class EnergyAnalysisAgent:
     
     def __init__(self):
         self.model = "llama-3.1-8b-instant"
-        print("🤖 [AGENT] Energy Analysis Agent Initialized.")
+        print("[AGENT] Energy Analysis Agent Initialized.")
 
     def verify_document_domain(self, text_snippet: str):
         """
@@ -55,10 +55,10 @@ class EnergyAnalysisAgent:
         try:
             response = execute_with_rotation(groq_rotator, _call_groq)
             result = json.loads(response.choices[0].message.content)
-            print(f"🕵️ [AGENT VERDICT] {result['category']} | Valid: {result['is_energy_related']}")
+            print(f"[AGENT VERDICT] {result['category']} | Valid: {result['is_energy_related']}")
             return result
         except Exception as e:
-            print(f"❌ [AGENT ERROR] Failed to analyze domain: {e}")
+            print(f"[ERROR] [AGENT ERROR] Failed to analyze domain: {e}")
             return {
                 "is_energy_related": True,
                 "category": "Unchecked",
@@ -99,13 +99,13 @@ class EnergyAnalysisAgent:
             )
 
         try:
-            print(f"📡 [AGENT] Sending request to Groq... (Snippet size: {len(content)} chars)")
+            print(f"[AGENT] Sending request to Groq... (Snippet size: {len(content)} chars)")
             response = execute_with_rotation(groq_rotator, _call_groq)
-            print(f"✅ [AGENT] Groq response received successfully.")
+            print(f"[AGENT] Groq response received successfully.")
             return json.loads(response.choices[0].message.content)
         except Exception as e:
             # CAPTURE EXACT ERROR DATA
-            print(f"❌ [AGENT ERROR] Failed to generate insight. Exact Error Type: {type(e).__name__} | Details: {str(e)}")
+            print(f"[ERROR] [AGENT ERROR] Failed to generate insight. Exact Error Type: {type(e).__name__} | Details: {str(e)}")
             if hasattr(e, 'response') and hasattr(e.response, 'text'):
                 print(f"📦 [AGENT ERROR] Raw API Response: {e.response.text}")
             

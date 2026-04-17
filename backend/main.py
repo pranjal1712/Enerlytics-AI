@@ -27,7 +27,7 @@ IS_PROD = os.getenv("ENVIRONMENT") == "production"
 COOKIE_SECURE = True if IS_PROD else False
 COOKIE_SAMESITE = "none" if IS_PROD else "lax"
 
-print(f"🚀 [AUTH INIT] Environment: {os.getenv('ENVIRONMENT', 'local')} | Secure: {COOKIE_SECURE} | SameSite: {COOKIE_SAMESITE}")
+print(f"[AUTH INIT] Environment: {os.getenv('ENVIRONMENT', 'local')} | Secure: {COOKIE_SECURE} | SameSite: {COOKIE_SAMESITE}")
 
 # Setup CORS - Use specific origin for cookies
 raw_origins = os.getenv(
@@ -36,7 +36,7 @@ raw_origins = os.getenv(
 ).split(",")
 
 origins = [o.strip() for o in raw_origins if o.strip()]
-print(f"🌍 [CORS INIT] Allowed Origins: {origins}")
+print(f"[CORS INIT] Allowed Origins: {origins}")
 
 app.add_middleware(
     CORSMiddleware,
@@ -52,7 +52,7 @@ def startup_event():
     import threading
     from db import init_qdrant, ensure_collections
     
-    print("🚀 [STARTUP] Initializing Services...")
+    print("[STARTUP] Initializing Services...")
     
     # 1. Fast Client Init (No blocking network calls)
     client = init_qdrant()
@@ -72,11 +72,11 @@ def startup_event():
     try:
         from db import redis_client
         redis_client.ping()
-        print("✅ Redis Connectivity: OK")
+        print("[INFO] Redis Connectivity: OK")
     except Exception as e:
-        print(f"❌ Redis Connectivity Failed: {e}")
+        print(f"[ERROR] Redis Connectivity Failed: {e}")
     
-    print("✨ API is ready and listening.")
+    print("[SUCCESS] API is ready and listening.")
 
 @app.post("/auth/signup")
 async def signup(request: Request, response: Response, user: User):
@@ -214,7 +214,7 @@ def get_current_user(request: Request):
             print("🍪 [AUTH DEBUG] Fallback to cookie auth")
         
     if not token:
-        print("❌ [AUTH DEBUG] No token found in headers or cookies")
+        print("[ERROR] [AUTH DEBUG] No token found in headers or cookies")
         raise HTTPException(status_code=401, detail="Not authenticated")
     
     try:
