@@ -99,10 +99,16 @@ class EnergyAnalysisAgent:
             )
 
         try:
+            print(f"📡 [AGENT] Sending request to Groq... (Snippet size: {len(content)} chars)")
             response = execute_with_rotation(groq_rotator, _call_groq)
+            print(f"✅ [AGENT] Groq response received successfully.")
             return json.loads(response.choices[0].message.content)
         except Exception as e:
-            print(f"❌ [AGENT ERROR] Failed to generate insight. Error: {e}")
+            # CAPTURE EXACT ERROR DATA
+            print(f"❌ [AGENT ERROR] Failed to generate insight. Exact Error Type: {type(e).__name__} | Details: {str(e)}")
+            if hasattr(e, 'response') and hasattr(e.response, 'text'):
+                print(f"📦 [AGENT ERROR] Raw API Response: {e.response.text}")
+            
             return {
                 "summary": "Document successfully indexed and ready for detailed analysis.",
                 "suggested_questions": ["What are the key technical specifications?", "Check for sustainability impacts?", "Summary of findings?"]
