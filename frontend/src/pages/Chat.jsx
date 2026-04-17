@@ -205,20 +205,27 @@ export default function Chat({ userProfile: propProfile, initialSessions, initia
 
   const handleDeleteSession = async (sid) => {
     try {
-      await apiFetch(`/chats/${sid}`, {
+      const res = await apiFetch(`/chats/${sid}`, {
         method: 'DELETE'
       });
-      // Optimistic Update: Filter BOTH sessions and documents
-      setSessions(sessions.filter(s => s.id !== sid));
-      setDocuments(documents.filter(d => d.linked_session_id !== sid));
+      
+      if (res.ok) {
+        // Only update local state if the server confirmed deletion
+        setSessions(sessions.filter(s => s.id !== sid));
+        setDocuments(documents.filter(d => d.linked_session_id !== sid));
 
-      if (activeSession?.id === sid) {
-        setActiveSession(null);
-        setMessages([]);
+        if (activeSession?.id === sid) {
+          setActiveSession(null);
+          setMessages([]);
+        }
+        if (refreshWorkspace) refreshWorkspace();
+      } else {
+        console.error("Server rejected the deletion request.");
+        alert("Failed to delete. Please try again.");
       }
-      if (refreshWorkspace) refreshWorkspace();
     } catch (err) {
       console.error("Delete failed:", err);
+      alert("Network Error: Could not reach the server to delete.");
     }
   };
 

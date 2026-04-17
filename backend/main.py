@@ -266,6 +266,20 @@ async def list_documents(user: str = Depends(get_current_user)):
     from db import get_user_documents
     return get_user_documents(user)
 
+@app.delete("/chats/{session_id}")
+async def remove_session(session_id: str, user: str = Depends(get_current_user)):
+    from db import delete_session
+    from rag import delete_vector_data
+    
+    # 1. Wipe Redis (Meta, History, Registry) and get document names
+    doc_names = delete_session(user, session_id)
+    
+    # 2. Wipe Qdrant Vectors if documents were found
+    if doc_names:
+        delete_vector_data(user, doc_names)
+        
+    return {"status": "success", "message": "Analysis purged from all neural layers."}
+
 @app.post("/upload")
 async def upload_document(
     background_tasks: BackgroundTasks,
