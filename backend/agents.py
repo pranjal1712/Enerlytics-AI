@@ -103,7 +103,7 @@ class EnergyAnalysisAgent:
             )
             return json.loads(response.choices[0].message.content)
         except Exception as e:
-            print(f"❌ [AGENT ERROR] Failed to generate insight: {e}")
+            print(f"❌ [AGENT ERROR] Failed to generate insight. This usually happens if GROQ_API_KEY is missing or invalid in Render. Error: {e}")
             return {
                 "summary": "Document successfully indexed and ready for detailed analysis.",
                 "suggested_questions": ["What are the key technical specifications?", "Check for sustainability impacts?", "Summary of findings?"]

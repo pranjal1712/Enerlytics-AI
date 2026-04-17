@@ -24,6 +24,8 @@ class APIKeyRotator:
                 else:
                     if not single_key.startswith("your-"):
                         self.keys.append(single_key)
+            
+        print(f"🔑 [ROTATOR] Initialized {env_prefix} with {len(self.keys)} active keys.")
 
     def get_key(self) -> str:
         if not self.keys:
