@@ -107,23 +107,27 @@ export default function Login({ setAuth, setHasDocs }) {
           </div>
         )}
 
-        {/* Social Logins */}
-        <div className="flex justify-center mb-6">
-          <button 
-            onClick={() => loginWithGoogle()}
-            className="premium-social-btn hover:bg-white/5 transition-all w-full flex items-center justify-center gap-4 py-4 border-none cursor-pointer bg-transparent"
-          >
-            <svg className="w-6 h-6" viewBox="0 0 24 24">
-              <path fill="#EA4335" d="M12.48 10.92v3.28h7.84c-.24 1.84-2 5.28-7.84 5.28-5.08 0-9.24-4.2-9.24-9.36s4.16-9.36 9.24-9.36c2.88 0 4.8 1.2 5.88 2.24l2.56-2.52C19.32 1.92 16.32 0 12.48 0 5.64 0 0 5.64 0 12.48s5.64 12.48 12.48 12.48c7.16 0 11.92-5.04 11.92-12.12 0-.84-.08-1.48-.2-2.12h-11.72z"/>
-            </svg>
-            <span className="text-sm font-bold text-white uppercase tracking-wider">Continue with Google</span>
-          </button>
-        </div>
+        {/* Social Logins - Only visible in development */}
+        {!import.meta.env.PROD && (
+          <>
+            <div className="flex justify-center mb-6">
+              <button 
+                onClick={() => loginWithGoogle()}
+                className="premium-social-btn hover:bg-white/5 transition-all w-full flex items-center justify-center gap-4 py-4 border-none cursor-pointer bg-transparent"
+              >
+                <svg className="w-6 h-6" viewBox="0 0 24 24">
+                  <path fill="#EA4335" d="M12.48 10.92v3.28h7.84c-.24 1.84-2 5.28-7.84 5.28-5.08 0-9.24-4.2-9.24-9.36s4.16-9.36 9.24-9.36c2.88 0 4.8 1.2 5.88 2.24l2.56-2.52C19.32 1.92 16.32 0 12.48 0 5.64 0 0 5.64 0 12.48s5.64 12.48 12.48 12.48c7.16 0 11.92-5.04 11.92-12.12 0-.84-.08-1.48-.2-2.12h-11.72z"/>
+                </svg>
+                <span className="text-sm font-bold text-white uppercase tracking-wider">Continue with Google</span>
+              </button>
+            </div>
 
-        <div className="relative flex justify-center text-xs uppercase mb-6">
-          <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-white/5"></div></div>
-          <span className="bg-[#0d0d0d] px-4 text-gray-400 font-bold z-10">Or</span>
-        </div>
+            <div className="relative flex justify-center text-xs uppercase mb-6">
+              <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-white/5"></div></div>
+              <span className="bg-[#0d0d0d] px-4 text-gray-400 font-bold z-10">Or</span>
+            </div>
+          </>
+        )}
 
         <form onSubmit={handleLogin} className="space-y-5">
           <div>
