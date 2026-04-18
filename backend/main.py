@@ -80,16 +80,81 @@ def startup_event():
 
 @app.post("/auth/signup")
 async def signup(request: Request, response: Response, user: User):
-    from db import rate_limit_check
+    from db import rate_limit_check, redis_client
+    from mail_utils import mail_handler
+    import random
+    
     if not rate_limit_check(user.email, limit=5, period_hours=1):
         raise HTTPException(status_code=429, detail="Too many signup attempts. Please try again in an hour.")
         
     if get_user_by_email(user.email):
         raise HTTPException(status_code=400, detail="Email already registered")
-    create_user(user)
     
-    # Auto-login after signup
-    token = create_access_token({"sub": user.email})
+    # Generate 6-digit OTP
+    otp = str(random.randint(100000, 999999))
+    
+    # Store USER DATA temporarily in Redis for 10 minutes
+    pending_key = f"pending_user:{user.email}"
+    pending_data = user.dict()
+    redis_client.setex(pending_key, 600, json.dumps(pending_data))
+    
+    # Store OTP in Redis for 10 minutes
+    otp_key = f"otp:{user.email}"
+    redis_client.setex(otp_key, 600, otp)
+    
+    # Send OTP Email
+    email_sent = await mail_handler.send_otp_email(user.email, otp)
+    
+    if not email_sent:
+        # If it's a local environment with no SMTP, we might want to log it for testing
+        if os.getenv("ENVIRONMENT") != "production":
+            print(f"🚩 [DEV ONLY] OTP for {user.email} is: {otp}")
+        else:
+            raise HTTPException(status_code=500, detail="Failed to send verification email. Please try again later.")
+
+    return {
+        "message": "Verification code sent to your email.",
+        "email": user.email,
+        "is_verifying": True
+    }
+
+@app.post("/auth/verify-otp")
+async def verify_otp(response: Response, data: dict):
+    from db import redis_client
+    email = data.get("email")
+    otp_provided = data.get("otp")
+    
+    if not email or not otp_provided:
+        raise HTTPException(status_code=400, detail="Email and OTP are required")
+        
+    # Check OTP in Redis
+    stored_otp = redis_client.get(f"otp:{email}")
+    if isinstance(stored_otp, bytes): stored_otp = stored_otp.decode('utf-8')
+    
+    if not stored_otp or stored_otp != otp_provided:
+        # For development/debugging
+        print(f"DEBUG: Stored OTP for {email} is {stored_otp}, provided was {otp_provided}")
+        raise HTTPException(status_code=400, detail="Invalid or expired verification code")
+        
+    # Validation successful -> Finalize User Creation
+    pending_key = f"pending_user:{email}"
+    user_data_raw = redis_client.get(pending_key)
+    if not user_data_raw:
+        raise HTTPException(status_code=400, detail="Registration session expired. Please sign up again.")
+    
+    if isinstance(user_data_raw, bytes): user_data_raw = user_data_raw.decode('utf-8')
+    user_data = json.loads(user_data_raw)
+    
+    # Map back to User object for create_user
+    new_user = User(**user_data)
+    create_user(new_user)
+    
+    # Cleanup Redis
+    redis_client.delete(f"otp:{email}")
+    redis_client.delete(pending_key)
+    
+    # Issue Access Token
+    token = create_access_token({"sub": email})
     response.set_cookie(
         key="access_token", 
         value=token, 
@@ -98,7 +163,8 @@ async def signup(request: Request, response: Response, user: User):
         samesite=COOKIE_SAMESITE, 
         secure=COOKIE_SECURE
     )
-    return {"message": "User created successfully", "access_token": token}
+    
+    return {"message": "Email verified successfully", "access_token": token}
 
 @app.post("/auth/login")
 async def login(request: Request, response: Response, user: User):
@@ -330,6 +396,14 @@ async def upload_document(
             if not validate_domain_keywords(text):
                 os.remove(tmp_path)
                 raise HTTPException(status_code=400, detail=f"File {file.filename} is not a valid Energy document. Only technical energy data is allowed.")
+
+            # Stage 2: AI Contextual Validation (Gatekeeper)
+            # Use the first 2000 characters for a deep contextual check
+            ai_verdict = energy_agent.verify_document_domain(text)
+            if not ai_verdict.get("is_energy_related", True):
+                os.remove(tmp_path)
+                rejection_reason = ai_verdict.get("reasoning", "Document context does not align with technical energy data.")
+                raise HTTPException(status_code=400, detail=f"AI Rejection: {file.filename} was rejected. Reason: {rejection_reason}")
 
             if not first_text:
                 first_text = text

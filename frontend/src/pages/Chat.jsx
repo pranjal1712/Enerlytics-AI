@@ -93,8 +93,9 @@ export default function Chat({ userProfile: propProfile, initialSessions, initia
           // Navigated via Sidebar
           await handleSelectSession({ id: location.state.sessionId });
         } else {
-          // Fresh Boot / Refresh -> ALWAYS New Chat
-          await handleForceNewChat();
+          // Fresh Boot / Refresh -> Show Welcome Screen (No Auto-New Chat)
+          setActiveSession(null);
+          setMessages([]);
         }
       } catch (err) {
         console.error("Initialization failed:", err);

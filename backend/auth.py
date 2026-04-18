@@ -16,10 +16,12 @@ ACCESS_TOKEN_EXPIRE_DAYS = 10
 
 pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
 
+from pydantic import BaseModel, EmailStr, Field
+
 class User(BaseModel):
-    username: str
-    email: str
-    password: str
+    username: str = Field(..., min_length=1)
+    email: EmailStr
+    password: str = Field(..., min_length=8)
 
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)

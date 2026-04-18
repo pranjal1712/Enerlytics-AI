@@ -31,10 +31,15 @@ class EnergyAnalysisAgent:
         - Sustainability and carbon emissions in energy
         - High-voltage engineering
 
+        STRICT REJECTION CRITERIA:
+        - Rejection Case A: Personal documents (Resumes, CVs, Bio-data, IDs).
+        - Rejection Case B: Financial docs irrelevant to energy markets (Invoices, Receipts for groceries/retail).
+        - Rejection Case C: Non-technical literature (Children's stories, general news, sports).
+
         OUTPUT FORMAT (Strict JSON):
         {{
             "is_energy_related": boolean,
-            "category": "Solar/Wind/Grid/General/etc",
+            "category": "Solar/Wind/Grid/General/REJECTED",
             "reasoning": "A one-sentence explanation of why you accepted or rejected this.",
             "confidence": float (0.0 to 1.0)
         }}
