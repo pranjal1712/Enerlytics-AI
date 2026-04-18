@@ -354,9 +354,10 @@ export default function Chat({ userProfile: propProfile, initialSessions, initia
 
       setIsLoading(false);
       setMessages(prev => [...prev, { role: 'ai', content: '', isNew: true, isStreaming: true }]);
+      let accumulatedContent = '';
+      let done = false;
       const reader = res.body.getReader();
       const decoder = new TextDecoder('utf-8');
-      let done = false;
 
       while (!done) {
         const { value, done: readerDone } = await reader.read();
@@ -364,43 +365,41 @@ export default function Chat({ userProfile: propProfile, initialSessions, initia
         if (value) {
           const chunkText = decoder.decode(value, { stream: true });
 
-          // Analytical Trace Parsing: Check for [METADATA] prefix
           if (chunkText.includes('[METADATA]:')) {
             try {
               const parts = chunkText.split('\n\n');
               const metaPart = parts.find(p => p.startsWith('[METADATA]:'));
-
               if (metaPart) {
-                const metaString = metaPart.replace('[METADATA]: ', '');
-                const metadata = JSON.parse(metaString);
-
+                const metadata = JSON.parse(metaPart.replace('[METADATA]: ', ''));
                 setMessages(prev => {
                   const next = [...prev];
-                  next[next.length - 1].sources = metadata.chunks;
+                  next[next.length - 1] = { ...next[next.length - 1], sources: metadata.chunks };
                   return next;
                 });
-
-                // If there's content after the metadata line in the same chunk
                 const bodyText = parts.filter(p => !p.startsWith('[METADATA]:')).join('\n\n');
                 if (bodyText) {
+                  accumulatedContent += bodyText;
                   setMessages(prev => {
                     const next = [...prev];
-                    next[next.length - 1].content += bodyText;
+                    next[next.length - 1] = { ...next[next.length - 1], content: accumulatedContent };
                     return next;
                   });
                 }
                 continue;
               }
-            } catch (e) {
-              console.error("Metadata parse error", e);
-            }
+            } catch (e) { console.error(e); }
           }
 
+          accumulatedContent += chunkText;
           setMessages(prev => {
-            const newMessages = [...prev];
-            newMessages[newMessages.length - 1].content += chunkText;
-            newMessages[newMessages.length - 1].isStreaming = true;
-            return newMessages;
+            const next = [...prev];
+            const lastMessage = next[next.length - 1];
+            next[next.length - 1] = { 
+              ...lastMessage, 
+              content: accumulatedContent,
+              isStreaming: true 
+            };
+            return next;
           });
         }
       }
