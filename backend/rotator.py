@@ -62,8 +62,10 @@ def execute_with_rotation(rotator: APIKeyRotator, func, *args, **kwargs):
             try:
                 # Mask key for security but show last 4 chars for identification in logs
                 masked_key = f"***{key[-4:]}" if len(key) > 4 else "***"
-                kwargs['api_key'] = key
-                return func(*args, **kwargs)
+                
+                # EXECUTION: Call the function with explicit api_key
+                # We specifically avoid passing through arbitrary kwargs that might be polluted by environment
+                return func(*args, api_key=key)
             except Exception as e:
                 # CRITICAL: Print the actual error so user can see it in Render logs
                 print(f"[ERROR] API Key {masked_key} failed: {str(e)}")
