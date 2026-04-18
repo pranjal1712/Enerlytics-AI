@@ -433,7 +433,8 @@ export default function Chat({ userProfile: propProfile, initialSessions, initia
       localStorage.removeItem('access_token');
       localStorage.removeItem('user_email');
       if (setAuth) setAuth(false);
-      navigate('/login');
+      // 🛡️ FULL STATE RESET: Force reload to clear all React memory
+      window.location.href = '/login';
     }
   };
 

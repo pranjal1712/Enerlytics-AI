@@ -133,7 +133,7 @@ export default function Signup({ setAuth, setHasDocs }) {
 
   const signupWithGoogleManual = () => {
     const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-    const redirectUri = window.location.origin + '/signup';
+    const redirectUri = window.location.origin; // EXACT MATCH with your Google Console screenshot (http://localhost:3000)
     const scope = 'email profile openid';
     const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=token&scope=${encodeURIComponent(scope)}`;
     window.location.href = googleAuthUrl;
