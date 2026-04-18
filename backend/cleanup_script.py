@@ -23,7 +23,7 @@ def full_cleanup():
     try:
         client = init_qdrant()
         print("[QDRANT] Deleting old vector collections...")
-        collections_to_reset = ["energy-openai", "energy-minilm"]
+        collections_to_reset = ["energy-minilm"]
         
         existing_response = client.get_collections()
         existing = [c.name for c in existing_response.collections]

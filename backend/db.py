@@ -46,23 +46,23 @@ def ensure_collections():
     if not qdrant_client_instance:
         return
         
-    indexes = ["energy-openai", "energy-minilm"]
+    indexes = ["energy-minilm"]
     try:
-        print("🔍 Checking collections...")
+        print("[INFO] Checking collections...")
         existing_response = qdrant_client_instance.get_collections()
         existing = [c.name for c in existing_response.collections]
         
         for idx in indexes:
-            dim = 1536 if "openai" in idx else 384
+            dim = 384 # Fixed 384 for MiniLM
             if idx not in existing:
-                print(f"💎 Creating Collection: {idx}")
+                print(f"[INIT] Creating Collection: {idx}")
                 qdrant_client_instance.create_collection(
                     collection_name=idx,
                     vectors_config=models.VectorParams(size=dim, distance=models.Distance.COSINE)
                 )
         print("[SUCCESS] Collections Verified.")
     except Exception as e:
-        print(f"⚠️ Collection check failed: {e}")
+        print(f"[WARNING] Collection check failed: {e}")
 
 def cache_get(key: str):
     return redis_client.get(key)

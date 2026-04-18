@@ -37,8 +37,6 @@ class APIKeyRotator:
     def get_all_keys(self) -> List[str]:
         return self.keys
 
-openai_rotator = APIKeyRotator("OPENAI_API_KEY")
-cohere_rotator = APIKeyRotator("COHERE_API_KEY")
 groq_rotator = APIKeyRotator("GROQ_API_KEY")
 
 import time

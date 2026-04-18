@@ -3,7 +3,6 @@ import uuid
 import db
 import gc
 from qdrant_client.http import models
-import openai
 import groq
 from rotator import execute_with_rotation, groq_rotator
 
@@ -169,7 +168,7 @@ def retrieve_and_rerank(query: str, user_id: str, doc_name: str = None):
             limit=10
         )
     except Exception as e:
-        print(f"[ERROR] Search failed: {e}")
+        print("[ERROR] Search failed")
         res = []
         
     # Return structured metadata including scores and source filenames
