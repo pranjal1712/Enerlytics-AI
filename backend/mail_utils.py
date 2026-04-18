@@ -19,8 +19,8 @@ class MailHandler:
         self.fm = FastMail(self.conf)
 
     async def send_otp_email(self, email_to: EmailStr, otp: str):
-        # Path to logo in frontend/public
-        logo_path = os.path.join(os.path.dirname(__file__), "..", "frontend", "public", "logo.png")
+        # Using local static folder in backend for reliable access on Render
+        logo_path = os.path.join(os.path.dirname(__file__), "static", "logo.png")
         
         html = f"""
         <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 500px; margin: auto; padding: 30px; border: 1px solid #1a1a1a; border-radius: 16px; background-color: #0d0d0d; color: #ffffff; box-shadow: 0 10px 30px rgba(0,255,131,0.1);">
