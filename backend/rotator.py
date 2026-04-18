@@ -20,10 +20,12 @@ class APIKeyRotator:
             if single_key:
                 # Support comma-separated keys in a single env variable
                 if "," in single_key:
-                    self.keys.extend([k.strip() for k in single_key.split(",") if k.strip() and not k.startswith("your-")])
+                    # Strip spaces AND quotes (' or ") for cloud environment robustness
+                    self.keys.extend([k.strip().strip("'").strip('"') for k in single_key.split(",") if k.strip() and not k.startswith("your-")])
                 else:
-                    if not single_key.startswith("your-"):
-                        self.keys.append(single_key)
+                    clean_key = single_key.strip().strip("'").strip('"')
+                    if not clean_key.startswith("your-"):
+                        self.keys.append(clean_key)
             
         print(f"[ROTATOR] Initialized {env_prefix} with {len(self.keys)} active keys.")
 
@@ -43,27 +45,32 @@ import time
 
 def execute_with_rotation(rotator: APIKeyRotator, func, *args, **kwargs):
     max_attempts = 3
-    delays = [0, 4, 5]  # No delay for 1st, 4s for 2nd, 5s for 3rd
+    delays = [0, 4, 8]  # Progressive delay for retries
     
     last_exception = None
     
     for attempt in range(max_attempts):
         if attempt > 0:
-            print(f"[RETRY] API attempt {attempt} failed. Waiting {delays[attempt]}s before retry...")
+            print(f"[RETRY] Attempt {attempt+1}/{max_attempts} starting after {delays[attempt]}s sleep...")
             time.sleep(delays[attempt])
             
         keys = list(rotator.get_all_keys())
         if not keys:
-            raise Exception(f"No API keys found for {rotator.env_prefix}. Please check your .env file.")
+            raise Exception(f"No API keys found for {rotator.env_prefix}. Please check your environment variables.")
         
         random.shuffle(keys)
         
         for key in keys:
             try:
+                # Mask key for security but show last 4 chars for identification in logs
+                masked_key = f"***{key[-4:]}" if len(key) > 4 else "***"
                 kwargs['api_key'] = key
                 return func(*args, **kwargs)
             except Exception as e:
-                print(f"[RETRY] Key failed, rotating... Error: {e}")
+                # CRITICAL: Print the actual error so user can see it in Render logs
+                print(f"[ERROR] API Key {masked_key} failed: {str(e)}")
                 last_exception = e
             
-    raise Exception("The AI Server is currently under heavy load or facing technical difficulties. Please try again after some time.")
+    # If we reach here, all keys failed after all attempts
+    error_msg = f"The AI Server is currently under heavy load or facing technical difficulties. (Last Error: {str(last_exception)})"
+    raise Exception(error_msg)
