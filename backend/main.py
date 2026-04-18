@@ -35,7 +35,8 @@ raw_origins = os.getenv(
     "https://enerlytics-ai-fawn.vercel.app,https://enerlytics-ai-snowy.vercel.app,http://localhost:3000,http://localhost:5173"
 ).split(",")
 
-origins = [o.strip() for o in raw_origins if o.strip()]
+# Strip spaces AND trailing slashes for robust matching
+origins = [o.strip().rstrip("/") for o in raw_origins if o.strip()]
 print(f"[CORS INIT] Allowed Origins: {origins}")
 
 app.add_middleware(
