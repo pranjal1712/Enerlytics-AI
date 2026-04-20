@@ -7,8 +7,7 @@ const RootLayout = () => {
   
   // Show topology (3D grid) for all auth pages and upload page
   // Hide it (dots only) for the chat dashboard to keep it clean
-  const isChat = location.pathname === '/chat';
-  const showTopology = !isChat;
+  const showTopology = true;
 
   return (
     <div className="root-layout">
