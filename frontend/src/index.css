@@ -771,7 +771,7 @@ body {
   height: 100dvh;
   width: 100vw;
   overflow: hidden;
-  background: #050505;
+  background: transparent;
 }
 
 .main-chat {
