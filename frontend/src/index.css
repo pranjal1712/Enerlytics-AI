@@ -101,13 +101,8 @@ html {
   background-color: #000000;
 }
 
-#root,
-.root-layout {
-  background: transparent !important;
-}
-
 body {
-  background-color: transparent !important;
+  background-color: #000000;
   color: var(--text-primary);
   min-height: 100vh;
   overflow-x: hidden;
@@ -2541,16 +2536,6 @@ body {
     z-index: 1000;
     animation: fadeIn 0.3s ease;
   }
-
-.vanta-bg-container {
-  background: radial-gradient(circle at 10% 20%, rgba(0, 200, 83, 0.15) 0%, rgba(0, 0, 0, 1) 90%) !important;
-}
-
-@media (max-width: 500px) {
-  .vanta-bg-container {
-    display: none !important;
-  }
-}
 
   .main-chat {
     padding-top: 60px;
