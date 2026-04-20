@@ -13,8 +13,8 @@ const VantaBackground = ({ showTopology = true, showDots = true }) => {
     const initVanta = () => {
       attempts++;
       
-      if ((!window.THREE || !window.VANTA || !window.VANTA.TOPOLOGY || !window.VANTA.DOTS) && attempts < 20) {
-        timer = setTimeout(initVanta, 50);
+      if ((!window.THREE || !window.VANTA || !window.VANTA.TOPOLOGY || !window.VANTA.DOTS) && attempts < 40) {
+        timer = setTimeout(initVanta, 100);
         return;
       }
 
@@ -82,7 +82,7 @@ const VantaBackground = ({ showTopology = true, showDots = true }) => {
   }, []); // Run ONCE on mount
 
   return (
-    <div className="vanta-bg-container" style={{ position: 'fixed', inset: 0, zIndex: -1 }}>
+    <div className="vanta-bg-container" style={{ position: 'fixed', inset: 0, zIndex: 0 }}>
       {/* Topology Background (Bottom) */}
       <div
         ref={topologyRef}

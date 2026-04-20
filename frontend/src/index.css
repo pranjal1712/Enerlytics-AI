@@ -98,7 +98,7 @@ html {
 }
 
 body {
-  background-color: transparent !important;
+  background-color: #000000;
   color: var(--text-primary);
   min-height: 100vh;
   overflow-x: hidden;
@@ -2533,9 +2533,11 @@ body {
     animation: fadeIn 0.3s ease;
   }
 
+@media (max-width: 500px) {
   .vanta-bg-container {
     display: none !important;
   }
+}
 
   .main-chat {
     padding-top: 60px;
