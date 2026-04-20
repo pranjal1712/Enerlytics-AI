@@ -2296,23 +2296,29 @@ body {
   transform: translateX(-50%);
   width: 92%;
   max-width: 850px;
-  background: rgba(15, 15, 20, 0.4);
-  backdrop-filter: blur(40px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #000000;
+  backdrop-filter: blur(20px);
+  border: 1px solid transparent;
+  background-image: linear-gradient(#000000, #000000), 
+                    linear-gradient(to right, #00c853, #05ffa1);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
   border-radius: 20px;
   padding: 8px 65px 8px 24px;
-  /* Room for docked button on right */
   display: flex;
   align-items: center;
-  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.7),
-    0 0 40px rgba(0, 200, 83, 0.05);
+  box-shadow: 
+    0 30px 60px rgba(0, 0, 0, 0.8),
+    0 0 20px rgba(0, 200, 83, 0.05);
   z-index: 100;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .chat-input-container:focus-within {
-  border-color: rgba(0, 200, 83, 0.3);
-  background: rgba(25, 25, 30, 0.6);
+  box-shadow: 
+    0 30px 60px rgba(0, 0, 0, 0.9),
+    0 0 30px rgba(0, 200, 83, 0.1);
+  transform: translateX(-50%) translateY(-2px);
 }
 
 .chat-input {
@@ -2326,6 +2332,12 @@ body {
   resize: none;
   max-height: 200px;
   font-family: 'Inter', sans-serif;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+.chat-input::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
 }
 
 .chat-submit {
@@ -2532,7 +2544,7 @@ body {
   }
 
   .chat-input-container {
-    bottom: 12px;
+    bottom: 6px;
     width: 94%;
     padding: 8px 50px 8px 16px;
     border-radius: 14px;
@@ -2541,6 +2553,12 @@ body {
     align-items: center;
     background: rgba(15, 15, 20, 0.85); /* More opaque on mobile */
     backdrop-filter: blur(20px);
+    border: 1px solid transparent;
+    background-image: linear-gradient(#000000, #000000), 
+                      linear-gradient(to right, #00c853, #05ffa1);
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+    box-shadow: 0 0 20px rgba(0, 200, 83, 0.05);
   }
 
   .chat-submit {
