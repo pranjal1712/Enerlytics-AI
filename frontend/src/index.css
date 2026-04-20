@@ -4,6 +4,10 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+  background-color: #000000;
+}
+
 :root {
   --font-main: 'Inter', sans-serif;
   --font-accent: 'Outfit', sans-serif;
@@ -94,7 +98,7 @@ html {
 }
 
 body {
-  background-color: var(--bg-dark);
+  background-color: transparent !important;
   color: var(--text-primary);
   min-height: 100vh;
   overflow-x: hidden;
