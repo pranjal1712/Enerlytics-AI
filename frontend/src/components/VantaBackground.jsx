@@ -82,7 +82,7 @@ const VantaBackground = ({ showTopology = true, showDots = true }) => {
   }, []); // Run ONCE on mount
 
   return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 0, background: '#000' }}>
+    <div className="vanta-bg-container" style={{ position: 'fixed', inset: 0, zIndex: 0, background: '#000' }}>
       {/* Topology Background (Bottom) */}
       <div
         ref={topologyRef}

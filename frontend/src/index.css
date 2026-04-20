@@ -2255,7 +2255,8 @@ body {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  height: 100dvh; /* Better mobile support */
+  height: 100dvh;
+  /* Better mobile support */
   overflow: hidden;
   background: var(--bg-dark);
 }
@@ -2300,15 +2301,15 @@ body {
   background: #000000;
   backdrop-filter: blur(20px);
   border: 1px solid transparent;
-  background-image: linear-gradient(#000000, #000000), 
-                    linear-gradient(to right, #00c853, #05ffa1);
+  background-image: linear-gradient(#000000, #000000),
+    linear-gradient(to right, #00c853, #05ffa1);
   background-origin: border-box;
   background-clip: padding-box, border-box;
   border-radius: 20px;
   padding: 8px 65px 8px 24px;
   display: flex;
   align-items: center;
-  box-shadow: 
+  box-shadow:
     0 30px 60px rgba(0, 0, 0, 0.8),
     0 0 20px rgba(0, 200, 83, 0.05);
   z-index: 100;
@@ -2316,7 +2317,7 @@ body {
 }
 
 .chat-input-container:focus-within {
-  box-shadow: 
+  box-shadow:
     0 30px 60px rgba(0, 0, 0, 0.9),
     0 0 30px rgba(0, 200, 83, 0.1);
   transform: translateX(-50%) translateY(-2px);
@@ -2333,12 +2334,15 @@ body {
   resize: none;
   max-height: 200px;
   font-family: 'Inter', sans-serif;
-  scrollbar-width: none !important; /* Firefox */
-  -ms-overflow-style: none !important; /* IE and Edge */
+  scrollbar-width: none !important;
+  /* Firefox */
+  -ms-overflow-style: none !important;
+  /* IE and Edge */
 }
 
 .chat-input::-webkit-scrollbar {
-  display: none !important; /* Chrome, Safari and Opera */
+  display: none !important;
+  /* Chrome, Safari and Opera */
   width: 0 !important;
   height: 0 !important;
 }
@@ -2525,6 +2529,10 @@ body {
     animation: fadeIn 0.3s ease;
   }
 
+  .vanta-bg-container {
+    display: none !important;
+  }
+
   .main-chat {
     padding-top: 60px;
     /* Space for mobile header */
@@ -2554,11 +2562,12 @@ body {
     min-height: 54px;
     display: flex;
     align-items: center;
-    background: rgba(15, 15, 20, 0.85); /* More opaque on mobile */
+    background: rgba(15, 15, 20, 0.85);
+    /* More opaque on mobile */
     backdrop-filter: blur(20px);
     border: 1px solid transparent;
-    background-image: linear-gradient(#000000, #000000), 
-                      linear-gradient(to right, #00c853, #05ffa1);
+    background-image: linear-gradient(#000000, #000000),
+      linear-gradient(to right, #00c853, #05ffa1);
     background-origin: border-box;
     background-clip: padding-box, border-box;
     box-shadow: 0 0 20px rgba(0, 200, 83, 0.05);
