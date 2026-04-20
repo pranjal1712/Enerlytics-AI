@@ -81,20 +81,10 @@ const VantaBackground = ({ showTopology = true, showDots = true }) => {
   }, []); // Run ONCE on mount
 
   return (
-    <div className="vanta-bg-container" style={{ position: 'fixed', inset: 0, zIndex: 1, backgroundColor: 'black' }}>
-      {/* Topology Background (Bottom) */}
-      <div
-        ref={topologyRef}
-        style={{
-          position: 'absolute',
-          top: 0, left: 0, width: '100%', height: '100%',
-          zIndex: 0,
-          opacity: showTopology ? 0.4 : 0,
-          transition: 'opacity 1.5s ease-in-out',
-        }}
-      />
-
-      {/* Bubbles Overlay (Top) */}
+    <div className="vanta-bg-container" style={{ position: 'fixed', inset: 0, zIndex: 1 }}>
+      {/* Fallback Static Gradient is handled in CSS */}
+      
+      {/* Bubbles Overlay (Now the primary effect) */}
       <div
         ref={dotsRef}
         style={{
@@ -112,7 +102,7 @@ const VantaBackground = ({ showTopology = true, showDots = true }) => {
           position: 'absolute',
           top: 0, left: 0, width: '100%', height: '100%',
           zIndex: 2,
-          background: 'radial-gradient(circle at 50% 50%, transparent 0%, rgba(0,0,0,0.7) 100%)',
+          background: 'radial-gradient(circle at 50% 50%, transparent 0%, rgba(0,0,0,0.8) 100%)',
           pointerEvents: 'none',
         }}
       />

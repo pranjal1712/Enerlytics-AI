@@ -2542,6 +2542,10 @@ body {
     animation: fadeIn 0.3s ease;
   }
 
+.vanta-bg-container {
+  background: radial-gradient(circle at 10% 20%, rgba(0, 200, 83, 0.15) 0%, rgba(0, 0, 0, 1) 90%) !important;
+}
+
 @media (max-width: 500px) {
   .vanta-bg-container {
     display: none !important;
