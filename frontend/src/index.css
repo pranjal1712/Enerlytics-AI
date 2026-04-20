@@ -2332,12 +2332,14 @@ body {
   resize: none;
   max-height: 200px;
   font-family: 'Inter', sans-serif;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE and Edge */
 }
 
 .chat-input::-webkit-scrollbar {
-  display: none; /* Chrome, Safari and Opera */
+  display: none !important; /* Chrome, Safari and Opera */
+  width: 0 !important;
+  height: 0 !important;
 }
 
 .chat-submit {
