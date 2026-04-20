@@ -82,7 +82,7 @@ const VantaBackground = ({ showTopology = true, showDots = true }) => {
   }, []); // Run ONCE on mount
 
   return (
-    <div className="vanta-bg-container" style={{ position: 'fixed', inset: 0, zIndex: 0, background: '#000' }}>
+    <div className="vanta-bg-container" style={{ position: 'fixed', inset: 0, zIndex: -1 }}>
       {/* Topology Background (Bottom) */}
       <div
         ref={topologyRef}
@@ -90,7 +90,7 @@ const VantaBackground = ({ showTopology = true, showDots = true }) => {
           position: 'absolute',
           top: 0, left: 0, width: '100%', height: '100%',
           zIndex: 0,
-          opacity: showTopology ? 0.3 : 0,
+          opacity: showTopology ? 0.4 : 0,
           transition: 'opacity 1.5s ease-in-out',
         }}
       />
@@ -102,7 +102,7 @@ const VantaBackground = ({ showTopology = true, showDots = true }) => {
           position: 'absolute',
           top: 0, left: 0, width: '100%', height: '100%',
           zIndex: 1,
-          opacity: showDots ? 0.4 : 0,
+          opacity: showDots ? 0.6 : 0,
           transition: 'opacity 1.5s ease-in-out',
         }}
       />
