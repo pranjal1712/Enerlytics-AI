@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-const VantaBackground = ({ showTopology = true }) => {
+const VantaBackground = ({ showTopology = true, showDots = true }) => {
   const dotsEffectRef = useRef(null);
   const topologyEffectRef = useRef(null);
   const dotsRef = useRef(null);
@@ -102,7 +102,8 @@ const VantaBackground = ({ showTopology = true }) => {
           position: 'absolute',
           top: 0, left: 0, width: '100%', height: '100%',
           zIndex: 1,
-          opacity: 0.4, 
+          opacity: showDots ? 0.4 : 0,
+          transition: 'opacity 1.5s ease-in-out',
         }}
       />
 
