@@ -13,12 +13,11 @@ const VantaBackground = ({ showTopology = true, showDots = true }) => {
     const initVanta = () => {
       attempts++;
       
-      if ((!window.THREE || !window.VANTA || !window.VANTA.TOPOLOGY || !window.VANTA.DOTS) && attempts < 40) {
-        timer = setTimeout(initVanta, 100);
+      if (!window.VANTA) {
+        console.error("Vanta not found or blocked by browser.");
         return;
       }
-
-      if (!window.VANTA) return;
+      console.log("Initializing Vanta Effects...");
 
       // 1. Initialize Topology (Bottom Layer)
       if (topologyRef.current && window.VANTA.TOPOLOGY && !topologyEffectRef.current) {
@@ -82,7 +81,7 @@ const VantaBackground = ({ showTopology = true, showDots = true }) => {
   }, []); // Run ONCE on mount
 
   return (
-    <div className="vanta-bg-container" style={{ position: 'fixed', inset: 0, zIndex: 0 }}>
+    <div className="vanta-bg-container" style={{ position: 'fixed', inset: 0, zIndex: 1, backgroundColor: 'black' }}>
       {/* Topology Background (Bottom) */}
       <div
         ref={topologyRef}

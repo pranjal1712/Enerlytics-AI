@@ -97,8 +97,17 @@ html {
   font-family: var(--font-main);
 }
 
-body {
+html {
   background-color: #000000;
+}
+
+#root,
+.root-layout {
+  background: transparent !important;
+}
+
+body {
+  background-color: transparent !important;
   color: var(--text-primary);
   min-height: 100vh;
   overflow-x: hidden;
